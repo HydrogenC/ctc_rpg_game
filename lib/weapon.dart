@@ -1,4 +1,3 @@
-import 'skills/tic_arise.dart';
 import 'skill.dart';
 import 'basics.dart';
 import 'entity.dart';
@@ -19,9 +18,17 @@ class Weapon implements IUsable {
     int damage = attackDamage.getDamage();
 
     for (var element in self.weapon.passiveSkillList) {
-      damage = element.onAttack(self, target, damage);
+      damage += element.onAttack(self, target, damage);
     }
 
     return target.receiveDamage(self, damage);
+  }
+
+  Weapon clone() {
+    return Weapon(
+        name,
+        attackDamage,
+        [...activeSkillList.map((e) => e.clone())],
+        [...passiveSkillList.map((e) => e.clone())]);
   }
 }

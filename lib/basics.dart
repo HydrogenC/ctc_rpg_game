@@ -19,4 +19,9 @@ class DamageValue {
   int getDamage() {
     return random.nextInt(maxDamage - minDamage + 1) + minDamage + fixedDamage;
   }
+
+  @override
+  String toString(){
+    return "${minDamage}d$maxDamage+$fixedDamage";
+  }
 }
