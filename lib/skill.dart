@@ -4,7 +4,8 @@ import 'entity.dart';
 abstract class ActiveSkill implements IUsable {
   DamageValue skillDamage;
 
-  ActiveSkill(this.name, this.skillDamage);
+  ActiveSkill(this.name, this.description, this.skillDamage);
+  ActiveSkill clone();
 
   @override
   int use(Entity self, Entity target) {
@@ -19,12 +20,11 @@ abstract class ActiveSkill implements IUsable {
 
   @override
   String name;
-
-  ActiveSkill clone();
+  String description;
 }
 
 abstract class PassiveSkill {
-  String name;
+  String name, description;
 
   int onAttack(Entity self, Entity target, int damage) {
     return 0;
@@ -42,6 +42,6 @@ abstract class PassiveSkill {
 
   void onDeath(Entity self) {}
 
-  PassiveSkill(this.name);
+  PassiveSkill(this.name, this.description);
   PassiveSkill clone();
 }

@@ -10,8 +10,7 @@ enum EntityState {
 }
 
 class EntityView extends StatefulWidget {
-  const EntityView({Key? key, required this.entity})
-      : super(key: key);
+  const EntityView({Key? key, required this.entity}) : super(key: key);
 
   final Entity entity;
 
@@ -24,7 +23,7 @@ class _EntityViewState extends State<EntityView> {
 
   @override
   Widget build(BuildContext context) {
-    Entity activeEntity=GlobalData.singleton.activeEntity;
+    Entity activeEntity = GlobalData.singleton.activeEntity;
 
     if (widget.entity.blood > 0) {
       if (widget.entity == activeEntity) {
@@ -107,8 +106,7 @@ class _EntityViewState extends State<EntityView> {
           },
           onAccept: (data) {
             setState(() {
-              int damage = activeEntity.weapon
-                  .use(activeEntity, widget.entity);
+              int damage = activeEntity.weapon.use(activeEntity, widget.entity);
               currentState = widget.entity.blood == 0
                   ? EntityState.dead
                   : EntityState.normal;

@@ -3,8 +3,10 @@ import 'package:ctc_rpg_game/skill.dart';
 
 class TicArise extends PassiveSkill {
   int _additionalDamage = 0;
+  static const String _description =
+      "伤害加值随着攻击次数增加上限为+5，达到上限使获得鬼上身效果（鬼上身：效果开始后两个回合攻击改为两段攻击，第三回合清除所有被动并眩晕一回合）";
 
-  TicArise() : super("将魂苏醒");
+  TicArise() : super("将魂苏醒", _description);
 
   @override
   int onAttack(Entity self, Entity target, int damage) {

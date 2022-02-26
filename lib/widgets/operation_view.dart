@@ -10,12 +10,13 @@ class DraggableButton extends StatefulWidget {
       required this.usable,
       required this.width,
       required this.height,
+      required this.text,
       required this.tooltip})
       : super(key: key);
 
   final IUsable usable;
   final double width, height;
-  final String tooltip;
+  final String tooltip, text;
 
   @override
   State<StatefulWidget> createState() => _DraggableButtonState();
@@ -32,10 +33,10 @@ class _DraggableButtonState extends State<DraggableButton> {
         child: Container(
           height: widget.height,
           width: widget.width,
-          child: const Center(
+          child: Center(
               child: Text(
-            '普攻',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            widget.text,
+            style: const TextStyle(color: Colors.white, fontSize: 18),
           )),
           decoration: BoxDecoration(
               color: Colors.blueAccent,
@@ -58,29 +59,64 @@ class _DraggableButtonState extends State<DraggableButton> {
   }
 }
 
-class OperationView extends StatelessWidget {
-  const OperationView({Key? key}) : super(key: key);
+class TooltipButton extends StatelessWidget {
+  const TooltipButton(
+      {Key? key,
+      required this.width,
+      required this.height,
+      required this.text,
+      required this.tooltip})
+      : super(key: key);
+
+  final double width, height;
+  final String tooltip, text;
 
   @override
   Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Container(
+        height: height,
+        width: width,
+        child: Center(
+            child: Text(
+          text,
+          style: const TextStyle(color: Colors.white, fontSize: 18),
+        )),
+        decoration: BoxDecoration(
+            color: Colors.blueAccent, borderRadius: BorderRadius.circular(10)),
+      ),
+      textStyle: tooltipText,
+      padding: const EdgeInsets.all(12),
+      preferBelow: false,
+    );
+  }
+}
+
+class OperationView extends StatelessWidget {
+  OperationView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("Redrew the operation area");
     var activeEntity = GlobalData.singleton.activeEntity;
 
     return Container(
         padding: const EdgeInsets.all(20),
         child: Center(
           child: Column(children: <Widget>[
-            const Padding(
-                padding: EdgeInsets.all(10),
+            Padding(
+                padding: const EdgeInsets.all(10),
                 child: Text(
-                  "普通攻击",
-                  style: TextStyle(fontSize: 18),
+                  activeEntity.weapon.name,
+                  style: const TextStyle(fontSize: 18),
                 )),
             DraggableButton(
               usable: activeEntity.weapon,
               width: 100,
               height: 60,
-              tooltip:
-                  '普攻武器: ${activeEntity.weapon.name}\n攻击伤害: ${activeEntity.weapon.attackDamage}',
+              text: '普攻',
+              tooltip: '攻击伤害: ${activeEntity.weapon.attackDamage}',
             ),
             const Padding(
                 padding: EdgeInsets.all(10),
@@ -88,11 +124,34 @@ class OperationView extends StatelessWidget {
                   "被动技能",
                   style: TextStyle(fontSize: 18),
                 )),
-            DraggableButton(
-              usable: activeEntity.weapon,
-              width: 100,
-              height: 60,
-              tooltip: '普通攻击',
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                ...activeEntity.weapon.passiveSkillList.map((e) =>
+                    TooltipButton(
+                        width: 100,
+                        height: 60,
+                        tooltip: e.description,
+                        text: e.name))
+              ],
+            ),
+            const Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  "主动技能",
+                  style: TextStyle(fontSize: 18),
+                )),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                ...activeEntity.weapon.activeSkillList.map((e) =>
+                    DraggableButton(
+                        width: 100,
+                        height: 60,
+                        tooltip: e.description,
+                        usable: e,
+                        text: e.name))
+              ],
             ),
           ]),
         ));

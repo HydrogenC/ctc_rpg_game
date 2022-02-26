@@ -43,21 +43,18 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-
-
 class _MyHomePageState extends State<MyHomePage> {
-  ValueNotifier<Entity> activeEntityMoved =
-      ValueNotifier(GlobalData.singleton.activeEntity);
+  ValueNotifier<bool> activeEntityMoved = ValueNotifier(false);
 
   void moveNext() {
     setState(() {
       GlobalData.singleton.moveNext();
+      activeEntityMoved.value = !activeEntityMoved.value;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -70,7 +67,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 title: "友方单位",
                 entityList: GlobalData.singleton.friends,
               )),
-          const Expanded(flex: 4, child: OperationView()),
+          Expanded(
+            flex: 4,
+            child: ValueListenableBuilder(
+                valueListenable: activeEntityMoved,
+                builder: (BuildContext context, bool b, Widget? child) =>
+                    OperationView()),
+          ),
           Expanded(
               flex: 3,
               child: EntityPanel(
@@ -85,5 +88,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.next_plan_outlined),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    activeEntityMoved.dispose();
+    super.dispose();
   }
 }
