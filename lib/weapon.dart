@@ -1,3 +1,4 @@
+import 'global_data.dart';
 import 'skill.dart';
 import 'basics.dart';
 import 'entity.dart';
@@ -16,6 +17,8 @@ class Weapon implements IUsable {
   @override
   int use(Entity self, Entity target) {
     int damage = attackDamage.getDamage();
+
+    GlobalData.singleton.appendMessage("(武器)$name: 伤害$damage");
     return target.receiveDamage(
         self, damage + proceedPassive(self, target, damage));
   }

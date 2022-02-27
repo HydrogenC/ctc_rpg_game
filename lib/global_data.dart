@@ -1,4 +1,5 @@
 import 'package:ctc_rpg_game/entity.dart';
+import 'package:flutter/foundation.dart';
 
 class GlobalData {
   GlobalData._internal() {
@@ -17,12 +18,20 @@ class GlobalData {
     Entity("敌人1", 50, 0),
   ];
 
-  int activeIndex = 0, remainingAttacks = 1;
+  int remainingAttacks = 1;
   late int friendsAlive, enemiesAlive;
 
-  Entity get activeEntity => friends[activeIndex];
-
+  Entity get activeEntity => friends[activeEntityChanged.value];
   static GlobalData singleton = GlobalData._internal();
+  List<String> messageList = [];
+
+  ValueNotifier<bool> messageAppended = ValueNotifier(false);
+  late ValueNotifier<int> activeEntityChanged = ValueNotifier(0);
+
+  void appendMessage(String str) {
+    messageAppended.value = !messageAppended.value;
+    messageList.add(str);
+  }
 
   void moveNext() {
     if (friendsAlive == 0) {
@@ -30,10 +39,10 @@ class GlobalData {
     }
 
     do {
-      activeIndex++;
-      if (activeIndex >= friends.length) {
-        activeIndex = 0;
+      activeEntityChanged.value += 1;
+      if (activeEntityChanged.value >= friends.length) {
+        activeEntityChanged.value = 0;
       }
-    } while (friends[activeIndex].blood <= 0);
+    } while (friends[activeEntityChanged.value].blood <= 0);
   }
 }

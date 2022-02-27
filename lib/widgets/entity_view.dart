@@ -71,7 +71,7 @@ class _EntityViewState extends State<EntityView> {
                       const Icon(Icons.favorite, color: Colors.white),
                       Container(
                         padding: const EdgeInsets.all(5),
-                        width: 40,
+                        width: 50,
                         child: Center(
                             child: Text(widget.entity.blood.toString(),
                                 style: whiteText)),
