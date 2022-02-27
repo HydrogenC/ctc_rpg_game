@@ -72,9 +72,8 @@ class _EntityViewState extends State<EntityView> {
                       Container(
                         padding: const EdgeInsets.all(5),
                         width: 50,
-                        child: Center(
-                            child: Text(widget.entity.blood.toString(),
-                                style: whiteText)),
+                        child: Text(widget.entity.blood.toString(),
+                            style: whiteText),
                       ),
                     ],
                   ),
@@ -85,10 +84,8 @@ class _EntityViewState extends State<EntityView> {
                       Container(
                           padding: const EdgeInsets.all(5),
                           width: 100,
-                          child: Center(
-                            child: Text(widget.entity.weapon.name,
-                                style: whiteText),
-                          )),
+                          child: Text(widget.entity.weapon.name,
+                              style: whiteText)),
                     ],
                   ),
                 ],
@@ -107,10 +104,11 @@ class _EntityViewState extends State<EntityView> {
           },
           onAccept: (data) {
             setState(() {
-              int damage = data.use(activeEntity, widget.entity);
+              data.use(activeEntity, widget.entity);
               currentState = widget.entity.blood == 0
                   ? EntityState.dead
                   : EntityState.normal;
+              GlobalData.singleton.afterAttack();
             });
           },
           onLeave: (data) {

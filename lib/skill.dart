@@ -42,6 +42,7 @@ abstract class PassiveSkill {
   }
 
   void onTurnStart(Entity self) {}
+  void onTurnEnd(Entity self) {}
 
   int onDamaged(Entity self, Entity attacker, int damage) {
     return 0;

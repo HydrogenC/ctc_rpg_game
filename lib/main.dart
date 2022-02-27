@@ -72,10 +72,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   flex: 4,
                   child: ValueListenableBuilder(
-                      valueListenable: GlobalData.singleton.activeEntityChanged,
-                      builder:
-                          (BuildContext context, int value, Widget? child) =>
-                              OperationView()),
+                      valueListenable: GlobalData.singleton.operationViewUpdate,
+                      builder: (BuildContext context, bool value,
+                              Widget? child) =>
+                          OperationView(
+                              enabled:
+                                  GlobalData.singleton.remainingAttacks != 0)),
                 ),
                 Expanded(
                     flex: 3,

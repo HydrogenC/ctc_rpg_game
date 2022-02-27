@@ -8,25 +8,25 @@ class GlobalData {
   }
 
   List<Entity> friends = [
-    Entity("玩家1", 30, 0.8),
-    Entity("玩家2", 50, 0.6),
-    Entity("玩家3", 100, 0.2),
-    Entity("玩家4", 200, 0.1),
+    Entity("姜哥", 30, 0.8),
+    Entity("崔哥", 50, 0.6),
+    Entity("金哥", 100, 0.2),
+    Entity("翔哥", 200, 0.1),
   ];
 
   List<Entity> enemies = [
-    Entity("敌人1", 50, 0),
+    Entity("袁泉", 400, 0),
   ];
 
-  int remainingAttacks = 1;
+  int activeIndex = 0, remainingAttacks = 1;
   late int friendsAlive, enemiesAlive;
 
-  Entity get activeEntity => friends[activeEntityChanged.value];
+  Entity get activeEntity => friends[activeIndex];
   static GlobalData singleton = GlobalData._internal();
   List<String> messageList = [];
 
   ValueNotifier<bool> messageAppended = ValueNotifier(false);
-  late ValueNotifier<int> activeEntityChanged = ValueNotifier(0);
+  ValueNotifier<bool> operationViewUpdate = ValueNotifier(false);
 
   void appendMessage(String str) {
     messageAppended.value = !messageAppended.value;
@@ -39,10 +39,19 @@ class GlobalData {
     }
 
     do {
-      activeEntityChanged.value += 1;
-      if (activeEntityChanged.value >= friends.length) {
-        activeEntityChanged.value = 0;
+      activeIndex++;
+      if (activeIndex >= friends.length) {
+        activeIndex = 0;
       }
-    } while (friends[activeEntityChanged.value].blood <= 0);
+    } while (friends[activeIndex].blood <= 0);
+
+    operationViewUpdate.value = !operationViewUpdate.value;
+  }
+
+  void afterAttack() {
+    remainingAttacks--;
+    if (remainingAttacks == 0) {
+      operationViewUpdate.value = !operationViewUpdate.value;
+    }
   }
 }
