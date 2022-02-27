@@ -25,9 +25,9 @@ class DraggableButton extends StatefulWidget {
 class _DraggableButtonState extends State<DraggableButton> {
   @override
   Widget build(BuildContext context) {
-    return Draggable<String>(
+    return Draggable<IUsable>(
       // Data is the value this Draggable stores.
-      data: 'red',
+      data: widget.usable,
       child: Tooltip(
         message: widget.tooltip,
         child: Container(

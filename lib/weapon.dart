@@ -16,12 +16,18 @@ class Weapon implements IUsable {
   @override
   int use(Entity self, Entity target) {
     int damage = attackDamage.getDamage();
+    return target.receiveDamage(
+        self, damage + proceedPassive(self, target, damage));
+  }
 
+  // Calculate the additional damage dealt by passives
+  int proceedPassive(Entity self, Entity target, int damage) {
+    int add = 0;
     for (var element in self.weapon.passiveSkillList) {
-      damage += element.onAttack(self, target, damage);
+      add += element.onAttack(self, target, damage);
     }
 
-    return target.receiveDamage(self, damage);
+    return add;
   }
 
   Weapon clone() {

@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void moveNext() {
     setState(() {
       GlobalData.singleton.moveNext();
+      GlobalData.singleton.remainingAttacks = 1;
       activeEntityMoved.value = !activeEntityMoved.value;
     });
   }

@@ -1,3 +1,4 @@
+import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/global_data.dart';
 import 'package:flutter/material.dart';
 import '../entity.dart';
@@ -52,7 +53,7 @@ class _EntityViewState extends State<EntityView> {
 
     return Container(
         padding: const EdgeInsets.all(5.0),
-        child: DragTarget<String>(
+        child: DragTarget<IUsable>(
           builder: (
             BuildContext context,
             List<dynamic> accepted,
@@ -106,7 +107,7 @@ class _EntityViewState extends State<EntityView> {
           },
           onAccept: (data) {
             setState(() {
-              int damage = activeEntity.weapon.use(activeEntity, widget.entity);
+              int damage = data.use(activeEntity, widget.entity);
               currentState = widget.entity.blood == 0
                   ? EntityState.dead
                   : EntityState.normal;

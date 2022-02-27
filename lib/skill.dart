@@ -5,17 +5,24 @@ abstract class ActiveSkill implements IUsable {
   DamageValue skillDamage;
 
   ActiveSkill(this.name, this.description, this.skillDamage);
+
   ActiveSkill clone();
 
   @override
   int use(Entity self, Entity target) {
     int damage = skillDamage.getDamage();
+    return target.receiveDamage(
+        self, damage + proceedPassive(self, target, damage));
+  }
 
+  // Calculate the additional damage dealt by passives
+  int proceedPassive(Entity self, Entity target, int damage) {
+    int add = 0;
     for (var element in self.weapon.passiveSkillList) {
-      damage += element.onActiveSkill(self, target, damage, this);
+      add += element.onActiveSkill(self, target, damage, this);
     }
 
-    return target.receiveDamage(self, damage);
+    return add;
   }
 
   @override
@@ -43,5 +50,6 @@ abstract class PassiveSkill {
   void onDeath(Entity self) {}
 
   PassiveSkill(this.name, this.description);
+
   PassiveSkill clone();
 }

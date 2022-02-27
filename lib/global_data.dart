@@ -1,9 +1,9 @@
 import 'package:ctc_rpg_game/entity.dart';
 
 class GlobalData {
-  GlobalData._internal(){
-    friendsAlive=friends.length;
-    enemiesAlive=enemies.length;
+  GlobalData._internal() {
+    friendsAlive = friends.length;
+    enemiesAlive = enemies.length;
   }
 
   List<Entity> friends = [
@@ -17,15 +17,15 @@ class GlobalData {
     Entity("敌人1", 50, 0),
   ];
 
-  int activeIndex = 0;
+  int activeIndex = 0, remainingAttacks = 1;
   late int friendsAlive, enemiesAlive;
 
   Entity get activeEntity => friends[activeIndex];
 
   static GlobalData singleton = GlobalData._internal();
 
-  void moveNext(){
-    if(friendsAlive==0){
+  void moveNext() {
+    if (friendsAlive == 0) {
       return;
     }
 
