@@ -14,13 +14,13 @@ class TicArise extends PassiveSkill {
     int ret = 0;
     if (_additionalDamage <= 5) {
       ret = _additionalDamage;
-      GlobalData.singleton.appendMessage("(被动)将魂苏醒: 伤害+$ret");
+      formMessage("伤害+$ret");
     } else if (_additionalDamage <= 7) {
       ret = damage;
-      GlobalData.singleton.appendMessage("(被动)将魂苏醒: 鬼上身伤害+$ret");
+      formMessage("鬼上身伤害+$ret");
     } else {
       _additionalDamage = -1;
-      GlobalData.singleton.appendMessage("(被动)将魂苏醒: 鬼上身消失，眩晕1回合");
+      formMessage("鬼上身消失，眩晕1回合");
     }
     _additionalDamage++;
 

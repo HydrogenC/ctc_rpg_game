@@ -18,6 +18,15 @@ class Entity {
   Entity.clone(Entity other)
       : this(other.name, other.maxBlood, other.evadePossibility);
 
+  int cure(int amount) {
+    amount = amount.clamp(0, maxBlood - blood);
+    blood += amount;
+
+    GlobalData.singleton.bloodChanged.value =
+        !GlobalData.singleton.bloodChanged.value;
+    return amount;
+  }
+
   int receiveDamage(Entity attacker, int damage) {
     if (random.nextDouble() < evadePossibility) {
       GlobalData.singleton
@@ -29,13 +38,13 @@ class Entity {
       damage -= element.onDamaged(this, attacker, damage);
     }
 
+    damage = damage.clamp(0, blood);
     blood -= damage;
-    if (blood < 0) {
-      blood = 0;
-    }
 
     GlobalData.singleton
         .appendMessage("“$name”受到来自“${attacker.name}”的$damage点伤害");
+    GlobalData.singleton.bloodChanged.value =
+        !GlobalData.singleton.bloodChanged.value;
     return damage;
   }
 }

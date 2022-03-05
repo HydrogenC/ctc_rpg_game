@@ -9,7 +9,7 @@ import 'package:ctc_rpg_game/entity.dart';
 
 void main() {
   GlobalData.singleton.friends[0].weapon = weapons['tomb']!.clone();
-  GlobalData.singleton.friends[1].weapon = weapons['boss']!.clone();
+  GlobalData.singleton.friends[1].weapon = weapons['elder']!.clone();
 
   runApp(const MyApp());
 }
@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void moveNext() {
     setState(() {
       GlobalData.singleton.moveNext();
-      GlobalData.singleton.remainingAttacks = 1;
+      GlobalData.singleton.remainingUses = 1;
     });
   }
 
@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               Widget? child) =>
                           OperationView(
                               enabled:
-                                  GlobalData.singleton.remainingAttacks != 0)),
+                                  GlobalData.singleton.remainingUses != 0)),
                 ),
                 Expanded(
                     flex: 3,

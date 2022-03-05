@@ -1,4 +1,7 @@
+import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
+import 'package:ctc_rpg_game/skill.dart';
+import 'package:ctc_rpg_game/weapon.dart';
 import 'package:flutter/foundation.dart';
 
 class GlobalData {
@@ -18,7 +21,7 @@ class GlobalData {
     Entity("袁泉", 400, 0),
   ];
 
-  int activeIndex = 0, remainingAttacks = 1;
+  int activeIndex = 0, remainingUses = 1;
   late int friendsAlive, enemiesAlive;
 
   Entity get activeEntity => friends[activeIndex];
@@ -27,6 +30,7 @@ class GlobalData {
 
   ValueNotifier<bool> messageAppended = ValueNotifier(false);
   ValueNotifier<bool> operationViewUpdate = ValueNotifier(false);
+  ValueNotifier<bool> bloodChanged = ValueNotifier(false);
 
   void appendMessage(String str) {
     messageAppended.value = !messageAppended.value;
@@ -48,9 +52,22 @@ class GlobalData {
     operationViewUpdate.value = !operationViewUpdate.value;
   }
 
-  void afterAttack() {
-    remainingAttacks--;
-    if (remainingAttacks == 0) {
+  void afterUse() {}
+
+  void use(Entity user, Entity target, IUsable usable) {
+    int actualDamage = usable.use(user, target);
+    if (usable is ActiveSkill) {
+      for (var element in user.weapon.passiveSkillList) {
+        element.afterActiveSkill(user, target, actualDamage, usable);
+      }
+    } else if (usable is Weapon) {
+      for (var element in user.weapon.passiveSkillList) {
+        element.afterAttack(user, target, actualDamage);
+      }
+    }
+
+    remainingUses--;
+    if (remainingUses == 0) {
       operationViewUpdate.value = !operationViewUpdate.value;
     }
   }

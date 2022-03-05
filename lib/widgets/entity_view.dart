@@ -72,8 +72,12 @@ class _EntityViewState extends State<EntityView> {
                       Container(
                         padding: const EdgeInsets.all(5),
                         width: 50,
-                        child: Text(widget.entity.blood.toString(),
-                            style: whiteText),
+                        child: ValueListenableBuilder(
+                            valueListenable: GlobalData.singleton.bloodChanged,
+                            builder: (BuildContext context, bool value,
+                                    Widget? child) =>
+                                Text(widget.entity.blood.toString(),
+                                    style: whiteText)),
                       ),
                     ],
                   ),
@@ -104,11 +108,10 @@ class _EntityViewState extends State<EntityView> {
           },
           onAccept: (data) {
             setState(() {
-              data.use(activeEntity, widget.entity);
+              GlobalData.singleton.use(activeEntity, widget.entity, data);
               currentState = widget.entity.blood == 0
                   ? EntityState.dead
                   : EntityState.normal;
-              GlobalData.singleton.afterAttack();
             });
           },
           onLeave: (data) {

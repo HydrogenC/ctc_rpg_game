@@ -1,3 +1,5 @@
+import 'package:ctc_rpg_game/global_data.dart';
+
 import 'basics.dart';
 import 'entity.dart';
 
@@ -33,22 +35,37 @@ abstract class ActiveSkill implements IUsable {
 abstract class PassiveSkill {
   String name, description;
 
+  // Calculate damage addition and return
   int onAttack(Entity self, Entity target, int damage) {
     return 0;
   }
 
+  // Calculate damage addition and return
   int onActiveSkill(Entity self, Entity target, int damage, ActiveSkill skill) {
     return 0;
   }
 
   void onTurnStart(Entity self) {}
+
   void onTurnEnd(Entity self) {}
 
+  void afterAttack(Entity self, Entity target, int damage) {}
+
+  void afterActiveSkill(
+      Entity self, Entity target, int damage, ActiveSkill skill) {}
+
+  void afterDamaged(Entity self, Entity attacker, int damage) {}
+
+  // Calculate damage reduction and return
   int onDamaged(Entity self, Entity attacker, int damage) {
     return 0;
   }
 
   void onDeath(Entity self) {}
+
+  void formMessage(String msg){
+    GlobalData.singleton.appendMessage("(被动)$name: $msg");
+  }
 
   PassiveSkill(this.name, this.description);
 
