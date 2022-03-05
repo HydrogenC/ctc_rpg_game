@@ -5,7 +5,7 @@ import 'basics.dart';
 
 class Entity {
   String name = "NULL";
-  int maxBlood;
+  int maxBlood, remainingUses = 1;
   double evadePossibility;
   late Weapon weapon;
   late int blood;

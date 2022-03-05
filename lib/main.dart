@@ -48,7 +48,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void moveNext() {
     setState(() {
       GlobalData.singleton.moveNext();
-      GlobalData.singleton.remainingUses = 1;
     });
   }
 
@@ -72,12 +71,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   flex: 4,
                   child: ValueListenableBuilder(
-                      valueListenable: GlobalData.singleton.operationViewUpdate,
+                      valueListenable: GlobalData.singleton.playerUsed,
                       builder: (BuildContext context, bool value,
                               Widget? child) =>
                           OperationView(
                               enabled:
-                                  GlobalData.singleton.remainingUses != 0)),
+                                  GlobalData.singleton.activeEntity.remainingUses != 0)),
                 ),
                 Expanded(
                     flex: 3,

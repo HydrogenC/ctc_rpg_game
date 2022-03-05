@@ -21,7 +21,7 @@ class GlobalData {
     Entity("袁泉", 400, 0),
   ];
 
-  int activeIndex = 0, remainingUses = 1;
+  int activeIndex = 0;
   late int friendsAlive, enemiesAlive;
 
   Entity get activeEntity => friends[activeIndex];
@@ -29,7 +29,7 @@ class GlobalData {
   List<String> messageList = [];
 
   ValueNotifier<bool> messageAppended = ValueNotifier(false);
-  ValueNotifier<bool> operationViewUpdate = ValueNotifier(false);
+  ValueNotifier<bool> playerUsed = ValueNotifier(false);
   ValueNotifier<bool> bloodChanged = ValueNotifier(false);
 
   void appendMessage(String str) {
@@ -42,17 +42,28 @@ class GlobalData {
       return;
     }
 
+    bool newTurnFlag = false;
     do {
       activeIndex++;
       if (activeIndex >= friends.length) {
+        newTurnFlag = true;
         activeIndex = 0;
       }
     } while (friends[activeIndex].blood <= 0);
 
-    operationViewUpdate.value = !operationViewUpdate.value;
-  }
+    if (newTurnFlag) {
+      for (var entity in friends) {
+        if (entity.blood > 0) {
+          entity.remainingUses = 1;
+          for (var element in entity.weapon.passiveSkillList) {
+            element.onNewTurn(entity);
+          }
+        }
+      }
+    }
 
-  void afterUse() {}
+    playerUsed.value = !playerUsed.value;
+  }
 
   void use(Entity user, Entity target, IUsable usable) {
     int actualDamage = usable.use(user, target);
@@ -64,11 +75,6 @@ class GlobalData {
       for (var element in user.weapon.passiveSkillList) {
         element.afterAttack(user, target, actualDamage);
       }
-    }
-
-    remainingUses--;
-    if (remainingUses == 0) {
-      operationViewUpdate.value = !operationViewUpdate.value;
     }
   }
 }

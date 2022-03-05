@@ -109,6 +109,12 @@ class _EntityViewState extends State<EntityView> {
           onAccept: (data) {
             setState(() {
               GlobalData.singleton.use(activeEntity, widget.entity, data);
+              activeEntity.remainingUses--;
+              if (activeEntity.remainingUses == 0) {
+                GlobalData.singleton.playerUsed.value =
+                    !GlobalData.singleton.playerUsed.value;
+              }
+
               currentState = widget.entity.blood == 0
                   ? EntityState.dead
                   : EntityState.normal;
