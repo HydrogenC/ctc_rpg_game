@@ -1,6 +1,6 @@
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
-import 'package:ctc_rpg_game/skill.dart';
+import 'package:ctc_rpg_game/active_skill.dart';
 
 class Punishment extends ActiveSkill {
   static const String _description = "造成999999点伤害";

@@ -1,6 +1,7 @@
 import 'package:ctc_rpg_game/entity.dart';
 import 'package:ctc_rpg_game/global_data.dart';
-import 'package:ctc_rpg_game/skill.dart';
+import 'package:ctc_rpg_game/passive_skill.dart';
+import 'package:ctc_rpg_game/skills_and_buffs/stunned.dart';
 
 class TicArise extends PassiveSkill {
   int _additionalDamage = 0;
@@ -21,6 +22,7 @@ class TicArise extends PassiveSkill {
     } else {
       _additionalDamage = -1;
       formMessage("鬼上身消失，眩晕1回合");
+      self.addBuff(Stunned(GlobalData.singleton.round, 1));
     }
     _additionalDamage++;
 

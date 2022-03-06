@@ -1,5 +1,5 @@
-import 'package:ctc_rpg_game/global_data.dart';
-
+import 'buff.dart';
+import 'global_data.dart';
 import 'weapon.dart';
 import 'basics.dart';
 
@@ -7,6 +7,7 @@ class Entity {
   String name = "NULL";
   int maxBlood, remainingUses = 1;
   double evadePossibility;
+  List<Buff> buffs = [];
   late Weapon weapon;
   late int blood;
 
@@ -38,6 +39,10 @@ class Entity {
       damage -= element.onDamaged(this, attacker, damage);
     }
 
+    for (var element in buffs) {
+      damage -= element.onDamaged(this, attacker, damage);
+    }
+
     damage = damage.clamp(0, blood);
     blood -= damage;
 
@@ -45,6 +50,23 @@ class Entity {
         .appendMessage("“$name”受到来自“${attacker.name}”的$damage点伤害");
     GlobalData.singleton.bloodChanged.value =
         !GlobalData.singleton.bloodChanged.value;
+
+    for (var element in weapon.passiveSkillList) {
+      element.afterDamaged(this, attacker, damage);
+    }
+
+    for(var element in buffs){
+      element.afterDamaged(this, attacker, damage);
+    }
+
     return damage;
+  }
+
+  void addBuff(Buff buff){
+    buffs.add(buff);
+  }
+
+  void checkBuff(){
+    buffs.removeWhere((element) => element.expired());
   }
 }

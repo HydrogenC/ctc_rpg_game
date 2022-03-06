@@ -1,8 +1,8 @@
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
-import 'package:ctc_rpg_game/skill.dart';
 import 'package:ctc_rpg_game/weapon.dart';
 import 'package:flutter/foundation.dart';
+import 'active_skill.dart';
 
 class GlobalData {
   GlobalData._internal() {
@@ -21,7 +21,7 @@ class GlobalData {
     Entity("袁泉", 400, 0),
   ];
 
-  int activeIndex = 0;
+  int activeIndex = 0, round=0;
   late int friendsAlive, enemiesAlive;
 
   Entity get activeEntity => friends[activeIndex];
@@ -52,10 +52,16 @@ class GlobalData {
     } while (friends[activeIndex].blood <= 0);
 
     if (newTurnFlag) {
+      round++;
       for (var entity in friends) {
         if (entity.blood > 0) {
           entity.remainingUses = 1;
           for (var element in entity.weapon.passiveSkillList) {
+            element.onNewTurn(entity);
+          }
+
+          entity.checkBuff();
+          for (var element in entity.buffs) {
             element.onNewTurn(entity);
           }
         }
@@ -63,18 +69,5 @@ class GlobalData {
     }
 
     playerUsed.value = !playerUsed.value;
-  }
-
-  void use(Entity user, Entity target, IUsable usable) {
-    int actualDamage = usable.use(user, target);
-    if (usable is ActiveSkill) {
-      for (var element in user.weapon.passiveSkillList) {
-        element.afterActiveSkill(user, target, actualDamage, usable);
-      }
-    } else if (usable is Weapon) {
-      for (var element in user.weapon.passiveSkillList) {
-        element.afterAttack(user, target, actualDamage);
-      }
-    }
   }
 }

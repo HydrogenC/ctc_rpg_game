@@ -108,8 +108,7 @@ class _EntityViewState extends State<EntityView> {
           },
           onAccept: (data) {
             setState(() {
-              GlobalData.singleton.use(activeEntity, widget.entity, data);
-              activeEntity.remainingUses--;
+              data.use(activeEntity, widget.entity);
               if (activeEntity.remainingUses == 0) {
                 GlobalData.singleton.playerUsed.value =
                     !GlobalData.singleton.playerUsed.value;

@@ -1,6 +1,6 @@
-import 'skills/transform.dart';
-import 'skills/punishment.dart';
-import 'skills/tic_arise.dart';
+import 'package:ctc_rpg_game/skills_and_buffs/punishment.dart';
+import 'package:ctc_rpg_game/skills_and_buffs/tic_arise.dart';
+import 'package:ctc_rpg_game/skills_and_buffs/transform.dart';
 import 'weapon.dart';
 import 'basics.dart';
 

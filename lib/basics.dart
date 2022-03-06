@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'active_skill.dart';
 import 'entity.dart';
 
 Random random = Random();
@@ -24,4 +25,32 @@ class DamageValue {
   String toString(){
     return "${minDamage}d$maxDamage+$fixedDamage";
   }
+}
+
+abstract class IGameEventListener{
+  // Calculate damage addition and return
+  int onAttack(Entity self, Entity target, int damage) {
+    return 0;
+  }
+
+  // Calculate damage addition and return
+  int onActiveSkill(Entity self, Entity target, int damage, ActiveSkill skill) {
+    return 0;
+  }
+
+  void onNewTurn(Entity self) {}
+
+  void afterAttack(Entity self, Entity target, int damage) {}
+
+  void afterActiveSkill(
+      Entity self, Entity target, int damage, ActiveSkill skill) {}
+
+  void afterDamaged(Entity self, Entity attacker, int damage) {}
+
+  // Calculate damage reduction and return
+  int onDamaged(Entity self, Entity attacker, int damage) {
+    return 0;
+  }
+
+  void onDeath(Entity self) {}
 }
