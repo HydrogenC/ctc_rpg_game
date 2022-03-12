@@ -23,8 +23,8 @@ class Entity {
     amount = amount.clamp(0, maxBlood - blood);
     blood += amount;
 
-    GlobalData.singleton.bloodChanged.value =
-        !GlobalData.singleton.bloodChanged.value;
+    GlobalData.singleton.operationDone.value =
+        !GlobalData.singleton.operationDone.value;
     return amount;
   }
 
@@ -48,8 +48,8 @@ class Entity {
 
     GlobalData.singleton
         .appendMessage("“$name”受到来自“${attacker.name}”的$damage点伤害");
-    GlobalData.singleton.bloodChanged.value =
-        !GlobalData.singleton.bloodChanged.value;
+    GlobalData.singleton.operationDone.value =
+        !GlobalData.singleton.operationDone.value;
 
     for (var element in weapon.passiveSkillList) {
       element.afterDamaged(this, attacker, damage);

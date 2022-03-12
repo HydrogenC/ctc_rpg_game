@@ -10,4 +10,8 @@ abstract class Buff extends IGameEventListener {
   bool expired() {
     return roundGained + lastingRounds < GlobalData.singleton.round;
   }
+
+  int remainingRounds() {
+    return roundGained + lastingRounds - GlobalData.singleton.round;
+  }
 }

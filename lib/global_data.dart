@@ -21,7 +21,7 @@ class GlobalData {
     Entity("袁泉", 400, 0),
   ];
 
-  int activeIndex = 0, round=0;
+  int activeIndex = 0, round = 0;
   late int friendsAlive, enemiesAlive;
 
   Entity get activeEntity => friends[activeIndex];
@@ -29,8 +29,7 @@ class GlobalData {
   List<String> messageList = [];
 
   ValueNotifier<bool> messageAppended = ValueNotifier(false);
-  ValueNotifier<bool> playerUsed = ValueNotifier(false);
-  ValueNotifier<bool> bloodChanged = ValueNotifier(false);
+  ValueNotifier<bool> operationDone = ValueNotifier(false);
 
   void appendMessage(String str) {
     messageAppended.value = !messageAppended.value;
@@ -68,6 +67,6 @@ class GlobalData {
       }
     }
 
-    playerUsed.value = !playerUsed.value;
+    operationDone.value = !operationDone.value;
   }
 }

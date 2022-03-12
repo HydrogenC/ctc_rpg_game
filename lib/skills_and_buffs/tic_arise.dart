@@ -19,10 +19,12 @@ class TicArise extends PassiveSkill {
     } else if (_additionalDamage <= 7) {
       ret = damage;
       formMessage("鬼上身伤害+$ret");
-    } else {
-      _additionalDamage = -1;
-      formMessage("鬼上身消失，眩晕1回合");
-      self.addBuff(Stunned(GlobalData.singleton.round, 1));
+
+      if (_additionalDamage == 7) {
+        _additionalDamage = -1;
+        formMessage("鬼上身消失，眩晕1回合");
+        self.addBuff(Stunned(GlobalData.singleton.round, 1));
+      }
     }
     _additionalDamage++;
 

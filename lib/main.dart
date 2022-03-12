@@ -71,12 +71,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   flex: 4,
                   child: ValueListenableBuilder(
-                      valueListenable: GlobalData.singleton.playerUsed,
-                      builder: (BuildContext context, bool value,
-                              Widget? child) =>
-                          OperationView(
-                              enabled:
-                                  GlobalData.singleton.activeEntity.remainingUses != 0)),
+                      valueListenable: GlobalData.singleton.operationDone,
+                      builder:
+                          (BuildContext context, bool value, Widget? child) =>
+                              OperationView(
+                                  enabled: GlobalData.singleton.activeEntity
+                                          .remainingUses !=
+                                      0)),
                 ),
                 Expanded(
                     flex: 3,
