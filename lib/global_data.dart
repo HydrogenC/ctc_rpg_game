@@ -12,7 +12,7 @@ class GlobalData {
 
   List<Entity> friends = [
     Entity("姜哥", 30, 0.8),
-    Entity("崔哥", 50, 0.6),
+    Entity("崔哥", 50, 0.4),
     Entity("金哥", 100, 0.2),
     Entity("翔哥", 200, 0.1),
   ];
@@ -36,6 +36,22 @@ class GlobalData {
     messageList.add(str);
   }
 
+  void turnStart(){
+    for (var entity in friends) {
+      if (entity.blood > 0) {
+        entity.remainingUses = 1;
+        for (var element in entity.weapon.passiveSkillList) {
+          element.onNewTurn(entity);
+        }
+
+        entity.checkBuff();
+        for (var element in entity.buffs) {
+          element.onNewTurn(entity);
+        }
+      }
+    }
+  }
+
   void moveNext() {
     if (friendsAlive == 0) {
       return;
@@ -52,19 +68,7 @@ class GlobalData {
 
     if (newTurnFlag) {
       round++;
-      for (var entity in friends) {
-        if (entity.blood > 0) {
-          entity.remainingUses = 1;
-          for (var element in entity.weapon.passiveSkillList) {
-            element.onNewTurn(entity);
-          }
-
-          entity.checkBuff();
-          for (var element in entity.buffs) {
-            element.onNewTurn(entity);
-          }
-        }
-      }
+      turnStart();
     }
 
     operationDone.value = !operationDone.value;

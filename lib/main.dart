@@ -11,14 +11,8 @@ void main() {
   GlobalData.singleton.friends[0].weapon = weapons['tomb']!.clone();
   GlobalData.singleton.friends[1].weapon = weapons['elder']!.clone();
 
+  GlobalData.singleton.turnStart();
   runApp(const MyApp());
-}
-
-void showSnackBar(BuildContext context, String msg) {
-  var snackBar =
-      SnackBar(content: Text(msg), duration: const Duration(seconds: 2));
-  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
 class MyApp extends StatelessWidget {
