@@ -3,14 +3,12 @@ import 'package:ctc_rpg_game/entity.dart';
 import 'package:ctc_rpg_game/widgets/entity_view.dart';
 
 class EntityPanel extends StatelessWidget {
-  const EntityPanel(
-      {Key? key,
-        required this.title,
-        required this.entityList})
+  EntityPanel({Key? key, required this.title, required this.entityList})
       : super(key: key);
 
   final List<Entity> entityList;
   final String title;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +22,17 @@ class EntityPanel extends StatelessWidget {
                 child: Text(title, style: const TextStyle(fontSize: 24)),
               ),
             ),
-            ...entityList.map((e) => EntityView(entity: e)),
+            Expanded(
+                child: Scrollbar(
+              controller: _scrollController,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [...entityList.map((e) => EntityView(entity: e))],
+                ),
+              ),
+            )),
           ],
         ));
   }

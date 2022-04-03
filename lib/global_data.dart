@@ -1,6 +1,7 @@
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
 import 'package:ctc_rpg_game/weapon.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'active_skill.dart';
 
@@ -18,7 +19,7 @@ class GlobalData {
   ];
 
   List<Entity> enemies = [
-    Entity("袁泉", 400, 0),
+    Entity("袁哥", 400, 0),
   ];
 
   int activeIndex = 0, round = 0;
