@@ -14,10 +14,6 @@ abstract class ActiveSkill implements IUsable {
     damage = target.receiveDamage(
         self, damage + proceedPassive(self, target, damage));
 
-    for (var element in self.weapon.passiveSkillList) {
-      element.afterActiveSkill(self, target, damage, this);
-    }
-
     for (var element in self.buffs) {
       element.afterActiveSkill(self, target, damage, this);
     }
@@ -29,9 +25,6 @@ abstract class ActiveSkill implements IUsable {
   // Calculate the additional damage dealt by passives
   int proceedPassive(Entity self, Entity target, int damage) {
     int add = 0;
-    for (var element in self.weapon.passiveSkillList) {
-      add += element.onActiveSkill(self, target, damage, this);
-    }
 
     for (var element in self.buffs) {
       add += element.onActiveSkill(self, target, damage, this);

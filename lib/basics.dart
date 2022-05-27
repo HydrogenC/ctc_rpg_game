@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:flutter/material.dart';
+
 import 'active_skill.dart';
 import 'entity.dart';
 
@@ -12,6 +14,15 @@ abstract class IUsable {
   set name(String value);
 }
 
+// Ability to add more widgets to entity view
+abstract class ICustomEntityDisplay {
+  List<Widget> getNameBarAdditionalWidgets(Entity self) => [];
+
+  List<Widget> getWeaponBarAdditionalWidgets(Entity self) => [];
+
+  List<Widget> getHealthBarAdditionalWidgets(Entity self) => [];
+}
+
 class DamageValue {
   final int maxDamage, minDamage, fixedDamage;
 
@@ -22,12 +33,12 @@ class DamageValue {
   }
 
   @override
-  String toString(){
+  String toString() {
     return "${minDamage}d$maxDamage+$fixedDamage";
   }
 }
 
-abstract class IGameEventListener{
+abstract class IGameEventListener {
   // Calculate damage addition and return
   int onAttack(Entity self, Entity target, int damage) {
     return 0;

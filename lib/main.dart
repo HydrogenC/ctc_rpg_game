@@ -4,12 +4,10 @@ import 'package:ctc_rpg_game/widgets/console_view.dart';
 import 'package:ctc_rpg_game/widgets/entity_panel.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:flutter/material.dart';
-import 'package:ctc_rpg_game/basics.dart';
-import 'package:ctc_rpg_game/entity.dart';
 
 void main() {
-  GlobalData.singleton.friends[0].weapon = weapons['tomb']!.clone();
-  GlobalData.singleton.friends[1].weapon = weapons['elder']!.clone();
+  GlobalData.singleton.friends[0].changeWeapon(weapons['tomb']!.clone());
+  GlobalData.singleton.friends[1].changeWeapon(weapons['elder']!.clone());
 
   GlobalData.singleton.turnStart();
   runApp(const MyApp());

@@ -2,7 +2,7 @@ import 'package:ctc_rpg_game/entity.dart';
 import 'package:ctc_rpg_game/global_data.dart';
 import 'package:ctc_rpg_game/buff.dart';
 
-class Stunned extends Buff {
+class Stunned extends TemporaryBuff {
   static const String _description = "本回合无法操作";
 
   Stunned(int roundGained, int lastingRounds)

@@ -8,16 +8,30 @@ class Entity {
   int maxBlood, remainingUses = 1;
   double evadePossibility;
   List<Buff> buffs = [];
-  late Weapon weapon;
+  Weapon weapon = Weapon('手', const DamageValue(1, 3, 0), [], []);
   late int blood;
 
   Entity(this.name, this.maxBlood, this.evadePossibility, [Weapon? wp]) {
     blood = maxBlood;
-    weapon = wp ?? Weapon('手', const DamageValue(1, 3, 0), [], []);
+    if (wp != null) {
+      changeWeapon(wp);
+    }
   }
 
   Entity.clone(Entity other)
       : this(other.name, other.maxBlood, other.evadePossibility);
+
+  void changeWeapon(Weapon newWeapon) {
+    for (var element in weapon.permanentBuffList) {
+      buffs.removeWhere((e) => e.runtimeType == element.runtimeType);
+    }
+
+    weapon = newWeapon;
+
+    for (var element in weapon.permanentBuffList) {
+      addBuff(element.clone());
+    }
+  }
 
   int cure(int amount) {
     amount = amount.clamp(0, maxBlood - blood);
@@ -35,10 +49,6 @@ class Entity {
       return 0;
     }
 
-    for (var element in weapon.passiveSkillList) {
-      damage -= element.onDamaged(this, attacker, damage);
-    }
-
     for (var element in buffs) {
       damage -= element.onDamaged(this, attacker, damage);
     }
@@ -51,22 +61,18 @@ class Entity {
     GlobalData.singleton.operationDone.value =
         !GlobalData.singleton.operationDone.value;
 
-    for (var element in weapon.passiveSkillList) {
-      element.afterDamaged(this, attacker, damage);
-    }
-
-    for(var element in buffs){
+    for (var element in buffs) {
       element.afterDamaged(this, attacker, damage);
     }
 
     return damage;
   }
 
-  void addBuff(Buff buff){
+  void addBuff(Buff buff) {
     buffs.add(buff);
   }
 
-  void checkBuff(){
+  void checkBuffExpired() {
     buffs.removeWhere((element) => element.expired());
   }
 }

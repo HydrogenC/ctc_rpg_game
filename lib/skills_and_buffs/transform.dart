@@ -1,7 +1,8 @@
-import '../entity.dart';
-import '../passive_skill.dart';
+import 'package:ctc_rpg_game/buff.dart';
 
-class Transform extends PassiveSkill {
+import '../entity.dart';
+
+class Transform extends PermanentBuff {
   static const String _description = "每次攻击时候会汲取对手的能量反哺自身，生命值+(攻击的伤害/2)";
 
   Transform() : super("转化", _description);
@@ -14,7 +15,7 @@ class Transform extends PassiveSkill {
   }
 
   @override
-  PassiveSkill clone() {
+  PermanentBuff clone() {
     return Transform();
   }
 }

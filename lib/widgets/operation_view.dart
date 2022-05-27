@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/global_data.dart';
@@ -142,7 +141,7 @@ class OperationView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                ...activeEntity.weapon.passiveSkillList
+                ...activeEntity.weapon.permanentBuffList
                     .map((e) => TooltipButton(
                           width: 100,
                           height: 60,

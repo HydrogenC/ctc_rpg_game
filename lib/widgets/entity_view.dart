@@ -1,4 +1,5 @@
 import 'package:ctc_rpg_game/basics.dart';
+import 'package:ctc_rpg_game/buff.dart';
 import 'package:ctc_rpg_game/global_data.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,10 @@ class EntityView extends StatefulWidget {
   @override
   State<EntityView> createState() => _EntityViewState();
 }
+
+var whiteText = const TextStyle(color: Colors.white, fontSize: 16);
+var titleText = const TextStyle(color: Colors.white, fontSize: 18);
+var textPadding = const EdgeInsets.fromLTRB(5, 0, 0, 0);
 
 class _EntityViewState extends State<EntityView> {
   EntityState currentState = EntityState.normal;
@@ -55,9 +60,6 @@ class _EntityViewState extends State<EntityView> {
       }
     }
 
-    var whiteText = const TextStyle(color: Colors.white, fontSize: 16);
-    var titleText = const TextStyle(color: Colors.white, fontSize: 18);
-    var textPadding = const EdgeInsets.fromLTRB(5, 0, 0, 0);
     late Color bgColor;
     switch (currentState) {
       case EntityState.normal:
@@ -75,12 +77,29 @@ class _EntityViewState extends State<EntityView> {
     }
 
     var message = "";
+    List<Widget> nameBarAdditionalWidgets = [];
+    List<Widget> weaponBarAdditionalWidgets = [];
+    List<Widget> healthBarAdditionalWidgets = [];
+
     for (var element in widget.entity.buffs) {
       if (element != widget.entity.buffs.first) {
         message += '\n';
       }
-      message +=
-          "${element.name} (剩余${element.remainingRounds()}回合): \n${element.description}";
+
+      var roundData = element is TemporaryBuff
+          ? "剩余${element.remainingRounds()}回合"
+          : "武器被动";
+      message += "${element.name} ($roundData): \n${element.description}";
+
+      if (element is ICustomEntityDisplay) {
+        var casted = element as ICustomEntityDisplay;
+        nameBarAdditionalWidgets
+            .addAll(casted.getNameBarAdditionalWidgets(widget.entity));
+        weaponBarAdditionalWidgets
+            .addAll(casted.getWeaponBarAdditionalWidgets(widget.entity));
+        healthBarAdditionalWidgets
+            .addAll(casted.getHealthBarAdditionalWidgets(widget.entity));
+      }
     }
 
     Widget imageWidget = profileImage ??
@@ -116,60 +135,70 @@ class _EntityViewState extends State<EntityView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     imageWidget,
-                    Expanded(
-                        child: Container(
-                      height: imageSize,
-                      decoration: BoxDecoration(
-                          color: bgColor,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.zero,
-                            topRight: Radius.circular(10),
-                            bottomLeft: Radius.zero,
-                            bottomRight: Radius.circular(10),
-                          )),
-                      child: Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                  padding: textPadding,
-                                  child: Text(widget.entity.name,
-                                      style: titleText)),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Icon(Icons.architecture,
-                                      color: Colors.white, size: 16),
-                                  Padding(
+                    ValueListenableBuilder(
+                      valueListenable: GlobalData.singleton.operationDone,
+                      builder:
+                          (BuildContext context, bool value, Widget? child) =>
+                              Expanded(
+                                  child: Container(
+                        height: imageSize,
+                        decoration: BoxDecoration(
+                            color: bgColor,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.zero,
+                              topRight: Radius.circular(10),
+                              bottomLeft: Radius.zero,
+                              bottomRight: Radius.circular(10),
+                            )),
+                        child: Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                          padding: textPadding,
+                                          child: Text(widget.entity.name,
+                                              style: titleText)),
+                                      ...nameBarAdditionalWidgets
+                                    ]),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.architecture,
+                                        color: Colors.white, size: 16),
+                                    Padding(
+                                        padding: textPadding,
+                                        child: Text(widget.entity.weapon.name,
+                                            style: whiteText)),
+                                    ...weaponBarAdditionalWidgets
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.favorite,
+                                        color: Colors.white, size: 16),
+                                    Padding(
                                       padding: textPadding,
-                                      child: Text(widget.entity.weapon.name,
-                                          style: whiteText)),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Icon(Icons.favorite,
-                                      color: Colors.white, size: 16),
-                                  Padding(
-                                      padding: textPadding,
-                                      child: ValueListenableBuilder(
-                                        valueListenable:
-                                            GlobalData.singleton.operationDone,
-                                        builder: (BuildContext context,
-                                                bool value, Widget? child) =>
-                                            Text(widget.entity.blood.toString(),
-                                                style: whiteText),
-                                      )),
-                                ],
-                              ),
-                            ],
-                          )),
-                    )),
+                                      child: Text(
+                                          widget.entity.blood.toString(),
+                                          style: whiteText),
+                                    ),
+                                    ...healthBarAdditionalWidgets
+                                  ],
+                                ),
+                              ],
+                            )),
+                      )),
+                    )
                   ],
                 );
               },
