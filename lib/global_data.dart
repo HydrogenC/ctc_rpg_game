@@ -1,11 +1,14 @@
+import 'dart:math';
+
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
 import 'package:ctc_rpg_game/weapon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'active_skill.dart';
 
 class GlobalData {
+  static Random random = Random();
+
   GlobalData._internal() {
     friendsAlive = friends.length;
     enemiesAlive = enemies.length;
@@ -37,15 +40,37 @@ class GlobalData {
     messageList.add(str);
   }
 
-  void turnStart(){
+  void turnStart() {
+    if (round != 0) {
+      for (var entity in enemies) {
+        // Target index in living allies
+        int target = random.nextInt(friendsAlive);
+
+        // Target index in all allies
+        int targetIndex = 0;
+
+        while (true) {
+          if (friends[targetIndex].blood > 0) {
+            if (target == 0) {
+              break;
+            }
+            target--;
+          }
+
+          targetIndex++;
+        }
+
+        entity.weapon.use(entity, friends[targetIndex]);
+        GlobalData.singleton.operationDone.value =
+            !GlobalData.singleton.operationDone.value;
+      }
+    }
+
     for (var entity in friends) {
       if (entity.blood > 0) {
         entity.remainingUses = 1;
-        for (var element in entity.weapon.passiveSkillList) {
-          element.onNewTurn(entity);
-        }
 
-        entity.checkBuff();
+        entity.checkBuffExpired();
         for (var element in entity.buffs) {
           element.onNewTurn(entity);
         }
