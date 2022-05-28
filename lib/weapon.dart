@@ -1,3 +1,5 @@
+import 'package:ctc_rpg_game/buff_type.dart';
+
 import 'active_skill.dart';
 import 'buff.dart';
 import 'global_data.dart';
@@ -10,7 +12,7 @@ class Weapon implements IUsable {
 
   DamageValue attackDamage;
   List<ActiveSkill> activeSkillList;
-  List<PermanentBuff> permanentBuffList;
+  List<Buff> permanentBuffList;
 
   Weapon(this.name, this.attackDamage, this.activeSkillList,
       this.permanentBuffList);
@@ -21,15 +23,16 @@ class Weapon implements IUsable {
 
     GlobalData.singleton.appendMessage("(武器)$name: 伤害=$damage");
 
-
     damage = target.receiveDamage(
         self, damage + proceedPassive(self, target, damage));
 
-    for (var element in self.buffs) {
+    for (var element in self.buffs.toList()) {
       element.afterAttack(self, target, damage);
     }
 
-    self.remainingUses--;
+    if (self.remainingUses > 0) {
+      self.remainingUses--;
+    }
     return damage;
   }
 
@@ -37,7 +40,7 @@ class Weapon implements IUsable {
   int proceedPassive(Entity self, Entity target, int damage) {
     int add = 0;
 
-    for (var element in self.buffs) {
+    for (var element in self.buffs.toList()) {
       add += element.onAttack(self, target, damage);
     }
     return add;
@@ -48,6 +51,6 @@ class Weapon implements IUsable {
         name,
         attackDamage,
         [...activeSkillList.map((e) => e.clone())],
-        [...permanentBuffList.map((e) => e.clone())]);
+        [...permanentBuffList.map((e) => e.clone(BuffType()))]);
   }
 }

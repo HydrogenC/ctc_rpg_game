@@ -2,8 +2,6 @@ import 'dart:math';
 
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
-import 'package:ctc_rpg_game/skills_and_buffs/ghost_book.dart';
-import 'package:ctc_rpg_game/weapon.dart';
 import 'package:ctc_rpg_game/weapon_defs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -73,7 +71,7 @@ class GlobalData {
         entity.remainingUses = 1;
 
         entity.checkBuffExpired();
-        for (var element in entity.buffs) {
+        for (var element in entity.buffs.toList()) {
           element.onNewTurn(entity);
         }
       }

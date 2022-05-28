@@ -5,6 +5,7 @@ import 'package:ctc_rpg_game/global_data.dart';
 import 'package:ctc_rpg_game/skills_and_buffs/stunned.dart';
 import 'package:flutter/material.dart';
 import 'package:ctc_rpg_game/widgets/entity_view.dart';
+import '../buff_type.dart';
 
 class ArmourDamage {
   Entity from;
@@ -13,12 +14,12 @@ class ArmourDamage {
   ArmourDamage(this.from, this.amount);
 }
 
-class Toughness extends PermanentBuff implements ICustomEntityDisplay {
+class Toughness extends Buff implements ICustomEntityDisplay {
   int _armour = 0;
   List<ArmourDamage> damages = [];
   static const String _description = "本回合获得10点护甲，回合结束时，对对手造成失去护甲的同等伤害";
 
-  Toughness() : super("坚韧", _description);
+  Toughness(BuffType type) : super("坚韧", _description, type);
 
   @override
   void onNewTurn(Entity self) {
@@ -45,9 +46,7 @@ class Toughness extends PermanentBuff implements ICustomEntityDisplay {
   }
 
   @override
-  PermanentBuff clone() {
-    return Toughness();
-  }
+  Buff clone(BuffType type) => Toughness(type);
 
   @override
   List<Widget> getHealthBarAdditionalWidgets(Entity self) {

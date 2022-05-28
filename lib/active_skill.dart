@@ -15,11 +15,13 @@ abstract class ActiveSkill implements IUsable {
     damage = target.receiveDamage(
         self, damage + proceedPassive(self, target, damage));
 
-    for (var element in self.buffs) {
+    for (var element in self.buffs.toList()) {
       element.afterActiveSkill(self, target, damage, this);
     }
 
-    self.remainingUses--;
+    if (self.remainingUses > 0) {
+      self.remainingUses--;
+    }
     return damage;
   }
 
@@ -27,7 +29,7 @@ abstract class ActiveSkill implements IUsable {
   int proceedPassive(Entity self, Entity target, int damage) {
     int add = 0;
 
-    for (var element in self.buffs) {
+    for (var element in self.buffs.toList()) {
       add += element.onActiveSkill(self, target, damage, this);
     }
     return add;

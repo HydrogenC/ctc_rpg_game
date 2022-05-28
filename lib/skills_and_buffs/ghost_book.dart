@@ -6,7 +6,7 @@ import 'package:ctc_rpg_game/buff.dart';
 import '../basics.dart';
 
 class GhostBook extends ActiveSkill {
-  static const String _description = "消耗 10% 的现有生命值，获得额外一个回合初始血量 40";
+  static const String _description = "消耗 10% 的现有生命值，获得额外一个回合";
 
   GhostBook() : super("予鬼书", _description, const DamageValue(0, 0, 0));
 

@@ -1,52 +1,22 @@
+import 'buff_type.dart';
 import 'entity.dart';
 import 'global_data.dart';
 import 'basics.dart';
 
 abstract class Buff extends IGameEventListener {
   String name, description;
+  BuffType buffType;
 
-  Buff(this.name, this.description);
+  Buff(this.name, this.description, this.buffType);
 
-  void formMessage(String msg);
+  void formMessage(String msg) {
+    GlobalData.singleton
+        .appendMessage("(${buffType.getTypeName()})$name: $msg");
+  }
 
   void onGain(Entity self) {}
 
   void onRemove(Entity self) {}
 
-  bool expired();
-}
-
-abstract class TemporaryBuff extends Buff {
-  TemporaryBuff(name, description, this.roundGained, this.lastingRounds)
-      : super(name, description);
-  int roundGained, lastingRounds;
-
-  @override
-  void formMessage(String msg) {
-    GlobalData.singleton.appendMessage("(BUFF)$name: $msg");
-  }
-
-  @override
-  bool expired() {
-    return roundGained + lastingRounds < GlobalData.singleton.round;
-  }
-
-  int remainingRounds() {
-    return roundGained + lastingRounds - GlobalData.singleton.round;
-  }
-}
-
-// Use permanent buff as passive skills
-abstract class PermanentBuff extends Buff {
-  PermanentBuff(name, description) : super(name, description);
-
-  @override
-  bool expired() => false;
-
-  PermanentBuff clone();
-
-  @override
-  void formMessage(String msg) {
-    GlobalData.singleton.appendMessage("(被动)$name: $msg");
-  }
+  Buff clone(BuffType type);
 }

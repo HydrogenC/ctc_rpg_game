@@ -1,3 +1,5 @@
+import 'package:ctc_rpg_game/buff_type.dart';
+
 import 'buff.dart';
 import 'global_data.dart';
 import 'weapon.dart';
@@ -12,7 +14,7 @@ class Entity {
   late int blood;
 
   Entity(this.name, this.maxBlood, this.evadePossibility,
-      [Weapon? wp, List<PermanentBuff>? initialBuffs]) {
+      [Weapon? wp, List<Buff>? initialBuffs]) {
     blood = maxBlood;
     if (wp != null) {
       changeWeapon(wp);
@@ -20,7 +22,7 @@ class Entity {
 
     if (initialBuffs != null) {
       for (var element in initialBuffs) {
-        addBuff(element.clone());
+        addBuff(element.clone(CharacterBuff()));
       }
     }
   }
@@ -36,7 +38,7 @@ class Entity {
     weapon = newWeapon;
 
     for (var element in weapon.permanentBuffList) {
-      addBuff(element.clone());
+      addBuff(element.clone(WeaponBuff(weapon)));
     }
   }
 
@@ -56,7 +58,7 @@ class Entity {
       return 0;
     }
 
-    for (var element in buffs) {
+    for (var element in buffs.toList()) {
       damage -= element.onDamaged(this, attacker, damage);
     }
 
@@ -68,7 +70,7 @@ class Entity {
     GlobalData.singleton.operationDone.value =
         !GlobalData.singleton.operationDone.value;
 
-    for (var element in buffs) {
+    for (var element in buffs.toList()) {
       element.afterDamaged(this, attacker, damage);
     }
 
@@ -86,7 +88,9 @@ class Entity {
   }
 
   void checkBuffExpired() {
-    for (var element in buffs.takeWhile((value) => value.expired())) {
+    for (var element in buffs.where((value) =>
+        value.buffType is TemporaryBuff &&
+        (value.buffType as TemporaryBuff).expired())) {
       removeBuff(element);
     }
   }
