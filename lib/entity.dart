@@ -11,10 +11,17 @@ class Entity {
   Weapon weapon = Weapon('手', const DamageValue(1, 3, 0), [], []);
   late int blood;
 
-  Entity(this.name, this.maxBlood, this.evadePossibility, [Weapon? wp]) {
+  Entity(this.name, this.maxBlood, this.evadePossibility,
+      [Weapon? wp, List<PermanentBuff>? initialBuffs]) {
     blood = maxBlood;
     if (wp != null) {
       changeWeapon(wp);
+    }
+
+    if (initialBuffs != null) {
+      for (var element in initialBuffs) {
+        addBuff(element.clone());
+      }
     }
   }
 
@@ -23,7 +30,7 @@ class Entity {
 
   void changeWeapon(Weapon newWeapon) {
     for (var element in weapon.permanentBuffList) {
-      buffs.removeWhere((e) => e.runtimeType == element.runtimeType);
+      removeBuff(buffs.firstWhere((e) => e.runtimeType == element.runtimeType));
     }
 
     weapon = newWeapon;
@@ -70,9 +77,17 @@ class Entity {
 
   void addBuff(Buff buff) {
     buffs.add(buff);
+    buff.onGain(this);
+  }
+
+  void removeBuff(Buff buff) {
+    buff.onRemove(this);
+    buffs.remove(buff);
   }
 
   void checkBuffExpired() {
-    buffs.removeWhere((element) => element.expired());
+    for (var element in buffs.takeWhile((value) => value.expired())) {
+      removeBuff(element);
+    }
   }
 }

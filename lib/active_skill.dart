@@ -1,5 +1,6 @@
 import 'basics.dart';
 import 'entity.dart';
+import 'global_data.dart';
 
 abstract class ActiveSkill implements IUsable {
   DamageValue skillDamage;
@@ -30,6 +31,10 @@ abstract class ActiveSkill implements IUsable {
       add += element.onActiveSkill(self, target, damage, this);
     }
     return add;
+  }
+
+  void formMessage(String msg) {
+    GlobalData.singleton.appendMessage("(主动)$name: $msg");
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'entity.dart';
 import 'global_data.dart';
 import 'basics.dart';
 
@@ -7,6 +8,10 @@ abstract class Buff extends IGameEventListener {
   Buff(this.name, this.description);
 
   void formMessage(String msg);
+
+  void onGain(Entity self) {}
+
+  void onRemove(Entity self) {}
 
   bool expired();
 }

@@ -3,9 +3,8 @@ import 'package:ctc_rpg_game/global_data.dart';
 import 'package:ctc_rpg_game/skills_and_buffs/stunned.dart';
 import 'package:ctc_rpg_game/buff.dart';
 
-
 class TicArise extends PermanentBuff {
-  static const String _description = "伤害加值随着攻击次数增加上限为+5，达到上限使获得鬼上身效果（鬼上身：效果开始后两个回合攻击改为两段攻击，第三回合清除所有被动并眩晕一回合）";
+  static const String _description = "伤害加值随着攻击次数增加上限为+5，达到上限使获得鬼上身效果\n（鬼上身：效果开始后两个回合攻击改为两段攻击，第三回合清除所有被动并眩晕一回合）";
   int _additionalDamage = 0;
 
   @override

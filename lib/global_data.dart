@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
+import 'package:ctc_rpg_game/skills_and_buffs/ghost_book.dart';
 import 'package:ctc_rpg_game/weapon.dart';
+import 'package:ctc_rpg_game/weapon_defs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -15,8 +17,8 @@ class GlobalData {
   }
 
   List<Entity> friends = [
-    Entity("姜哥", 30, 0.8),
-    Entity("崔哥", 50, 0.4),
+    Entity("姜哥", 30, 0.8, weapons['tomb']!.clone()),
+    Entity("崔哥", 50, 0.4, weapons['elder']!.clone()),
     Entity("金哥", 100, 0.2),
     Entity("翔哥", 200, 0.1),
   ];
@@ -74,6 +76,13 @@ class GlobalData {
         for (var element in entity.buffs) {
           element.onNewTurn(entity);
         }
+      }
+    }
+
+    for (var entity in enemies) {
+      if (entity.blood > 0) {
+        entity.remainingUses = 1;
+        entity.checkBuffExpired();
       }
     }
   }

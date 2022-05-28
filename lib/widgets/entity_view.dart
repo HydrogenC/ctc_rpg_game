@@ -177,6 +177,18 @@ class _EntityViewState extends State<EntityView> {
                                         padding: textPadding,
                                         child: Text(widget.entity.weapon.name,
                                             style: whiteText)),
+                                    const Padding(
+                                      padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                    ),
+                                    const Icon(Icons.beenhere_rounded,
+                                        color: Colors.white, size: 16),
+                                    Padding(
+                                      padding: textPadding,
+                                      child: Text(
+                                          widget.entity.remainingUses
+                                              .toString(),
+                                          style: whiteText),
+                                    ),
                                     ...weaponBarAdditionalWidgets
                                   ],
                                 ),
@@ -189,7 +201,7 @@ class _EntityViewState extends State<EntityView> {
                                     Padding(
                                       padding: textPadding,
                                       child: Text(
-                                          widget.entity.blood.toString(),
+                                          "${widget.entity.blood}/${widget.entity.maxBlood}",
                                           style: whiteText),
                                     ),
                                     ...healthBarAdditionalWidgets
