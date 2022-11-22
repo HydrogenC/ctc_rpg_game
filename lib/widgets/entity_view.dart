@@ -1,10 +1,8 @@
 import 'package:ctc_rpg_game/basics.dart';
-import 'package:ctc_rpg_game/buff.dart';
 import 'package:ctc_rpg_game/global_data.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../buff_type.dart';
 import '../entity.dart';
 
 enum EntityState {

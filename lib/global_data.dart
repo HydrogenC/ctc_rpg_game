@@ -1,3 +1,4 @@
+import 'dart:isolate';
 import 'dart:math';
 
 import 'package:ctc_rpg_game/basics.dart';
@@ -34,6 +35,23 @@ class GlobalData {
 
   ValueNotifier<bool> messageAppended = ValueNotifier(false);
   ValueNotifier<bool> operationDone = ValueNotifier(false);
+
+  late SendPort messageIn;
+  late Stream messageOut;
+
+  void startGameLoop() async {
+    ReceivePort eventBus = ReceivePort();
+    Isolate.spawn<SendPort>(_gameLoop, eventBus.sendPort);
+    GlobalData.singleton.messageIn = await eventBus.first;
+    messageOut = eventBus.asBroadcastStream();
+  }
+
+  void _gameLoop(SendPort sendPort) async {
+    ReceivePort receivePort = ReceivePort();
+
+    sendPort.send(receivePort.sendPort);
+    await for (var message in receivePort) {}
+  }
 
   void appendMessage(String str) {
     messageAppended.value = !messageAppended.value;

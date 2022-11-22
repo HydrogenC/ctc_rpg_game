@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:ctc_rpg_game/global_data.dart';
 import 'package:ctc_rpg_game/weapon_defs.dart';
 import 'package:ctc_rpg_game/widgets/console_view.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 
 void main() {
   GlobalData.singleton.turnStart();
+  GlobalData.singleton.startGameLoop();
   runApp(const MyApp());
 }
 
