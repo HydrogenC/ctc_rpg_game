@@ -6,8 +6,8 @@ import 'package:ctc_rpg_game/widgets/entity_panel.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:flutter/material.dart';
 
-void main() async {
-  await GlobalData.singleton.startGameLoop();
+void main() {
+  GlobalData.singleton.startGameLoop();
   GlobalData.singleton.turnStart();
 
   runApp(const MyApp());

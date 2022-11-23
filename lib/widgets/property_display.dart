@@ -35,6 +35,8 @@ class _PropertyDisplayState extends State<PropertyDisplay> {
         stream: widget.stream,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.hasData) {
+            debugPrint("Data received");
+
             var info = snapshot.data as PropertyChangeMessage;
             if (info.properties.containsKey(widget.propertyName)) {
               currentValue = info.properties[widget.propertyName]!;

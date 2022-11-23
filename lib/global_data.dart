@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
+import 'package:ctc_rpg_game/messages/property_change_message.dart';
 import 'package:ctc_rpg_game/weapon_defs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -37,20 +38,12 @@ class GlobalData {
   ValueNotifier<bool> messageAppended = ValueNotifier(false);
   ValueNotifier<bool> operationDone = ValueNotifier(false);
 
-  late SendPort messageIn;
-  StreamController messageOut = StreamController.broadcast();
+  SendPort? messageIn;
+  late StreamController messageOut = StreamController.broadcast();
 
   Future<void> startGameLoop() async {
-    ReceivePort inPort = ReceivePort();
-    Isolate.spawn<SendPort>(_gameLoop, inPort.sendPort);
-    GlobalData.singleton.messageIn = await inPort.first;
-  }
-
-  void _gameLoop(SendPort sendPort) async {
-    ReceivePort receivePort = ReceivePort();
-
-    sendPort.send(receivePort.sendPort);
-    await for (var message in receivePort) {}
+    await Future.delayed(const Duration(seconds: 2));
+    messageOut.add(PropertyChangeMessage(friends[0], {"hp": 8848, "use": 3}));
   }
 
   void appendMessage(String str) {
