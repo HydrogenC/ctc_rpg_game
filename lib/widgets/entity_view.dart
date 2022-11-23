@@ -1,6 +1,8 @@
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/global_data.dart';
+import 'package:ctc_rpg_game/messages/property_change_message.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
+import 'package:ctc_rpg_game/widgets/property_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../entity.dart';
@@ -29,6 +31,7 @@ class _EntityViewState extends State<EntityView> {
   EntityState currentState = EntityState.normal;
   static const double imageSize = 80;
   Image? profileImage;
+  Stream<dynamic>? propertyMessageStream;
 
   Future loadImageOrDefault(String path) async {
     AssetImage assetImage;
@@ -49,6 +52,15 @@ class _EntityViewState extends State<EntityView> {
 
   @override
   Widget build(BuildContext context) {
+    propertyMessageStream ??=
+        GlobalData.singleton.messageOut.stream.skipWhile((element) {
+      if (element is PropertyChangeMessage) {
+        return element.entity != widget.entity;
+      } else {
+        return true;
+      }
+    });
+
     Widget imageWidget = profileImage ??
         FutureBuilder(
           future: loadImageOrDefault('assets/${widget.entity.name}.jpg'),
@@ -95,9 +107,6 @@ class _EntityViewState extends State<EntityView> {
           }
 
           var message = "";
-          List<Widget> nameBarAdditionalWidgets = [];
-          List<Widget> weaponBarAdditionalWidgets = [];
-          List<Widget> healthBarAdditionalWidgets = [];
 
           for (var element in widget.entity.buffs) {
             if (element != widget.entity.buffs.first) {
@@ -106,16 +115,6 @@ class _EntityViewState extends State<EntityView> {
 
             message +=
                 "${element.name} (${element.buffType.getTypeName()}): \n${element.description}";
-
-            if (element is ICustomEntityDisplay) {
-              var casted = element as ICustomEntityDisplay;
-              nameBarAdditionalWidgets
-                  .addAll(casted.getNameBarAdditionalWidgets(widget.entity));
-              weaponBarAdditionalWidgets
-                  .addAll(casted.getWeaponBarAdditionalWidgets(widget.entity));
-              healthBarAdditionalWidgets
-                  .addAll(casted.getHealthBarAdditionalWidgets(widget.entity));
-            }
           }
 
           return Tooltip(
@@ -165,52 +164,22 @@ class _EntityViewState extends State<EntityView> {
                                                 padding: textPadding,
                                                 child: Text(widget.entity.name,
                                                     style: titleText)),
-                                            ...nameBarAdditionalWidgets
                                           ]),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                      Wrap(
+                                        spacing: 8.0,
+                                        runSpacing: 4.0,
+                                        alignment: WrapAlignment.center,
                                         children: [
-                                          const Icon(Icons.architecture,
-                                              color: Colors.white, size: 16),
-                                          Padding(
-                                              padding: textPadding,
-                                              child: Text(
-                                                  widget.entity.weapon.name,
-                                                  style: whiteText)),
-                                          const Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                20, 0, 0, 0),
-                                          ),
-                                          const Icon(Icons.beenhere_rounded,
-                                              color: Colors.white, size: 16),
-                                          Padding(
-                                            padding: textPadding,
-                                            child: Text(
-                                                widget.entity.remainingUses
-                                                    .toString(),
-                                                style: whiteText),
-                                          ),
-                                          ...weaponBarAdditionalWidgets
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          const Icon(Icons.favorite,
-                                              color: Colors.white, size: 16),
-                                          Padding(
-                                            padding: textPadding,
-                                            child: Text(
-                                                "${widget.entity.blood}/${widget.entity.maxBlood}",
-                                                style: whiteText),
-                                          ),
-                                          ...healthBarAdditionalWidgets
+                                          PropertyDisplay(
+                                              stream: propertyMessageStream!,
+                                              propertyName: 'hp',
+                                              icon: Icons.favorite,
+                                              enabledByDefault: true),
+                                          PropertyDisplay(
+                                              stream: propertyMessageStream!,
+                                              propertyName: 'uses',
+                                              icon: Icons.beenhere_rounded,
+                                              enabledByDefault: true)
                                         ],
                                       ),
                                     ],

@@ -1,15 +1,15 @@
 import 'dart:isolate';
 
 import 'package:ctc_rpg_game/global_data.dart';
-import 'package:ctc_rpg_game/weapon_defs.dart';
 import 'package:ctc_rpg_game/widgets/console_view.dart';
 import 'package:ctc_rpg_game/widgets/entity_panel.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  await GlobalData.singleton.startGameLoop();
   GlobalData.singleton.turnStart();
-  GlobalData.singleton.startGameLoop();
+
   runApp(const MyApp());
 }
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 import 'dart:math';
 
@@ -37,13 +38,12 @@ class GlobalData {
   ValueNotifier<bool> operationDone = ValueNotifier(false);
 
   late SendPort messageIn;
-  late Stream messageOut;
+  StreamController messageOut = StreamController.broadcast();
 
-  void startGameLoop() async {
-    ReceivePort eventBus = ReceivePort();
-    Isolate.spawn<SendPort>(_gameLoop, eventBus.sendPort);
-    GlobalData.singleton.messageIn = await eventBus.first;
-    messageOut = eventBus.asBroadcastStream();
+  Future<void> startGameLoop() async {
+    ReceivePort inPort = ReceivePort();
+    Isolate.spawn<SendPort>(_gameLoop, inPort.sendPort);
+    GlobalData.singleton.messageIn = await inPort.first;
   }
 
   void _gameLoop(SendPort sendPort) async {
