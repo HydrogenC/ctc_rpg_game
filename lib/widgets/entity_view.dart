@@ -1,10 +1,12 @@
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/global_data.dart';
 import 'package:ctc_rpg_game/messages/property_change_message.dart';
+import 'package:ctc_rpg_game/view_models/entity_view_model.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:ctc_rpg_game/widgets/property_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../entity.dart';
 
 enum EntityState {
@@ -52,15 +54,6 @@ class _EntityViewState extends State<EntityView> {
 
   @override
   Widget build(BuildContext context) {
-    propertyMessageStream ??=
-        GlobalData.singleton.messageOut.stream/*.skipWhile((element) {
-      if (element is PropertyChangeMessage) {
-        return element.entity != widget.entity;
-      } else {
-        return true;
-      }
-    })*/;
-
     Widget imageWidget = profileImage ??
         FutureBuilder(
           future: loadImageOrDefault('assets/${widget.entity.name}.jpg'),
@@ -89,7 +82,7 @@ class _EntityViewState extends State<EntityView> {
     late Color bgColor;
     switch (currentState) {
       case EntityState.normal:
-        bgColor = Colors.blueAccent;
+        bgColor = const Color(0xFF161616);
         break;
       case EntityState.highlighted:
         bgColor = Colors.lightBlue.shade100;
@@ -98,7 +91,7 @@ class _EntityViewState extends State<EntityView> {
         bgColor = Colors.grey;
         break;
       case EntityState.operating:
-        bgColor = Colors.red.shade800;
+        bgColor = Colors.blueAccent.shade400;
         break;
     }
 
@@ -110,107 +103,107 @@ class _EntityViewState extends State<EntityView> {
       }
 
       message +=
-      "${element.name} (${element.buffType.getTypeName()}): \n${element.description}";
+          "${element.name} (${element.buffType.getTypeName()}): \n${element.description}";
     }
 
-    return Tooltip(
-        message: message,
-        textStyle: tooltipText,
-        padding: const EdgeInsets.all(12),
-        child: Container(
-            padding: const EdgeInsets.all(5.0),
-            child: DragTarget<IUsable>(
-              builder: (
-                  BuildContext context,
-                  List<dynamic> accepted,
-                  List<dynamic> rejected,
+    return ChangeNotifierProvider(
+        create: (context) => EntityViewModel.fromEntity(widget.entity),
+        child: Tooltip(
+            message: message,
+            textStyle: tooltipText,
+            padding: const EdgeInsets.all(12),
+            child: Container(
+                padding: const EdgeInsets.all(5.0),
+                child: DragTarget<IUsable>(
+                  builder: (
+                    BuildContext context,
+                    List<dynamic> accepted,
+                    List<dynamic> rejected,
                   ) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    imageWidget,
-                    Expanded(
-                      child: Container(
-                        height: imageSize,
-                        decoration: BoxDecoration(
-                            color: bgColor,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.zero,
-                              topRight: Radius.circular(10),
-                              bottomLeft: Radius.zero,
-                              bottomRight: Radius.circular(10),
-                            )),
-                        child: Padding(
-                            padding:
-                            const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                            child: Column(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                          padding: textPadding,
-                                          child: Text(widget.entity.name,
-                                              style: titleText)),
-                                    ]),
-                                Wrap(
-                                  spacing: 8.0,
-                                  runSpacing: 4.0,
-                                  alignment: WrapAlignment.center,
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        imageWidget,
+                        Expanded(
+                          child: Container(
+                            height: imageSize,
+                            decoration: BoxDecoration(
+                                color: bgColor,
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.zero,
+                                  topRight: Radius.circular(10),
+                                  bottomLeft: Radius.zero,
+                                  bottomRight: Radius.circular(10),
+                                )),
+                            child: Padding(
+                                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    PropertyDisplay(
-                                        stream: propertyMessageStream!,
-                                        propertyName: 'hp',
-                                        icon: Icons.favorite,
-                                        enabledByDefault: true),
-                                    PropertyDisplay(
-                                        stream: propertyMessageStream!,
-                                        propertyName: 'uses',
-                                        icon: Icons.beenhere_rounded,
-                                        enabledByDefault: true)
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                              padding: textPadding,
+                                              child: Text(widget.entity.name,
+                                                  style: titleText)),
+                                        ]),
+                                    Wrap(
+                                      spacing: 8.0,
+                                      runSpacing: 4.0,
+                                      alignment: WrapAlignment.center,
+                                      children: [
+                                        PropertyDisplay(
+                                            stream: propertyMessageStream!,
+                                            propertyName: 'hp',
+                                            icon: Icons.favorite,
+                                            enabledByDefault: true),
+                                        PropertyDisplay(
+                                            stream: propertyMessageStream!,
+                                            propertyName: 'uses',
+                                            icon: Icons.beenhere_rounded,
+                                            enabledByDefault: true)
+                                      ],
+                                    ),
                                   ],
-                                ),
-                              ],
-                            )),
-                      ),
-                    ),
-                  ],
-                );
-              },
-              onWillAccept: (data) {
-                if (widget.entity.blood > 0) {
-                  setState(() {
-                    currentState = EntityState.highlighted;
-                  });
-                }
-                return widget.entity.blood > 0;
-              },
-              onAccept: (data) {
-                setState(() {
-                  data.use(activeEntity, widget.entity);
-                  GlobalData.singleton.operationDone.value =
-                  !GlobalData.singleton.operationDone.value;
+                                )),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  onWillAccept: (data) {
+                    if (widget.entity.blood > 0) {
+                      setState(() {
+                        currentState = EntityState.highlighted;
+                      });
+                    }
+                    return widget.entity.blood > 0;
+                  },
+                  onAccept: (data) {
+                    setState(() {
+                      data.use(activeEntity, widget.entity);
+                      GlobalData.singleton.operationDone.value =
+                          !GlobalData.singleton.operationDone.value;
 
-                  currentState = widget.entity.blood == 0
-                      ? EntityState.dead
-                      : EntityState.normal;
-                });
-              },
-              onLeave: (data) {
-                if (widget.entity.blood > 0) {
-                  setState(() {
-                    currentState = EntityState.normal;
-                  });
-                }
-              },
-            )));
+                      currentState = widget.entity.blood == 0
+                          ? EntityState.dead
+                          : EntityState.normal;
+                    });
+                  },
+                  onLeave: (data) {
+                    if (widget.entity.blood > 0) {
+                      setState(() {
+                        currentState = EntityState.normal;
+                      });
+                    }
+                  },
+                ))));
   }
 }

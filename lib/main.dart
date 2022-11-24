@@ -1,13 +1,12 @@
-import 'dart:isolate';
-
 import 'package:ctc_rpg_game/global_data.dart';
 import 'package:ctc_rpg_game/widgets/console_view.dart';
 import 'package:ctc_rpg_game/widgets/entity_panel.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:flutter/material.dart';
+import 'game_logic.dart';
 
 void main() {
-  GlobalData.singleton.startGameLoop();
+  startGameLoop();
   GlobalData.singleton.turnStart();
 
   runApp(const MyApp());
@@ -21,7 +20,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.deepPurple, fontFamily: '黑体'),
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData(
+        primaryColor: Colors.black,
+        brightness: Brightness.dark,
+        backgroundColor: const Color(0xFF212121),
+        dividerColor: Colors.black12,
+        fontFamily: '黑体',
+      ),
       home: const MyHomePage(title: '崔哥 RPG 模拟器'),
     );
   }

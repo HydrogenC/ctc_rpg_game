@@ -1,18 +1,7 @@
-import 'package:ctc_rpg_game/weapon.dart';
 import 'global_data.dart';
 
 class BuffType {
   String getTypeName() => "未知类型";
-}
-
-// Buff shipped with weapons
-class WeaponBuff extends BuffType {
-  Weapon weapon;
-
-  WeaponBuff(this.weapon);
-
-  @override
-  String getTypeName() => "武器被动";
 }
 
 // Buff shipped with characters

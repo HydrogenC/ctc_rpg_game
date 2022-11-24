@@ -5,9 +5,12 @@ import 'dart:math';
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
 import 'package:ctc_rpg_game/messages/property_change_message.dart';
-import 'package:ctc_rpg_game/weapon_defs.dart';
+import 'package:ctc_rpg_game/skills_and_buffs/ghost_book.dart';
+import 'package:ctc_rpg_game/skills_and_buffs/tic_arise.dart';
+import 'package:ctc_rpg_game/skills_and_buffs/toughness.dart';
+import 'package:ctc_rpg_game/skills_and_buffs/transform.dart';
+import 'package:ctc_rpg_game/buff_type.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 class GlobalData {
   static Random random = Random();
@@ -18,14 +21,16 @@ class GlobalData {
   }
 
   List<Entity> friends = [
-    Entity("姜哥", 30, 0.8, weapons['tomb']!.clone()),
-    Entity("崔哥", 50, 0.4, weapons['elder']!.clone()),
-    Entity("金哥", 100, 0.2),
-    Entity("翔哥", 200, 0.1),
+    Entity("姜哥", 30, 0.8, const DamageValue(1, 4, 2), [GhostBook()],
+        [TicArise(BuffType())]),
+    Entity("崔哥", 50, 0.4, const DamageValue(1, 4, 5), [],
+        [BloodTransform(BuffType()), Toughness(BuffType())]),
+    Entity("金哥", 100, 0, const DamageValue(1, 4, 2), [], []),
+    Entity("翔哥", 200, 0, const DamageValue(1, 4, 2), [], []),
   ];
 
   List<Entity> enemies = [
-    Entity("袁哥", 400, 0),
+    Entity("袁哥", 400, 0, const DamageValue(1, 4, 1), [], []),
   ];
 
   int activeIndex = 0, round = 0;
@@ -41,10 +46,7 @@ class GlobalData {
   SendPort? messageIn;
   late StreamController messageOut = StreamController.broadcast();
 
-  Future<void> startGameLoop() async {
-    await Future.delayed(const Duration(seconds: 2));
-    messageOut.add(PropertyChangeMessage(friends[0], {"hp": 8848, "use": 3}));
-  }
+
 
   void appendMessage(String str) {
     messageAppended.value = !messageAppended.value;
@@ -71,7 +73,7 @@ class GlobalData {
           targetIndex++;
         }
 
-        entity.weapon.use(entity, friends[targetIndex]);
+        entity.use(entity, friends[targetIndex]);
         GlobalData.singleton.operationDone.value =
             !GlobalData.singleton.operationDone.value;
       }

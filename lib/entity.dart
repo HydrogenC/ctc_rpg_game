@@ -1,24 +1,28 @@
 import 'package:ctc_rpg_game/buff_type.dart';
 
+import 'active_skill.dart';
 import 'buff.dart';
 import 'global_data.dart';
-import 'weapon.dart';
 import 'basics.dart';
 
-class Entity {
+class Entity implements IUsable {
+  @override
   String name = "NULL";
+
   int maxBlood, remainingUses = 1;
   double evadePossibility;
   List<Buff> buffs = [];
-  Weapon weapon = Weapon('手', const DamageValue(1, 3, 0), [], []);
+  List<ActiveSkill> activeSkillList;
+
+  // Passive skills are functionally equal to buffs
+  List<Buff> passiveSkillList;
+  DamageValue normalAttackDamage;
   late int blood;
 
   Entity(this.name, this.maxBlood, this.evadePossibility,
-      [Weapon? wp, List<Buff>? initialBuffs]) {
+      this.normalAttackDamage, this.activeSkillList, this.passiveSkillList,
+      [List<Buff>? initialBuffs]) {
     blood = maxBlood;
-    if (wp != null) {
-      changeWeapon(wp);
-    }
 
     if (initialBuffs != null) {
       for (var element in initialBuffs) {
@@ -28,19 +32,13 @@ class Entity {
   }
 
   Entity.clone(Entity other)
-      : this(other.name, other.maxBlood, other.evadePossibility);
-
-  void changeWeapon(Weapon newWeapon) {
-    for (var element in weapon.permanentBuffList) {
-      removeBuff(buffs.firstWhere((e) => e.runtimeType == element.runtimeType));
-    }
-
-    weapon = newWeapon;
-
-    for (var element in weapon.permanentBuffList) {
-      addBuff(element.clone(WeaponBuff(weapon)));
-    }
-  }
+      : this(
+            other.name,
+            other.maxBlood,
+            other.evadePossibility,
+            other.normalAttackDamage,
+            other.activeSkillList,
+            other.passiveSkillList);
 
   int cure(int amount) {
     amount = amount.clamp(0, maxBlood - blood);
@@ -49,6 +47,36 @@ class Entity {
     GlobalData.singleton.operationDone.value =
         !GlobalData.singleton.operationDone.value;
     return amount;
+  }
+
+  // Do normal attack
+  @override
+  int use(Entity self, Entity target) {
+    int damage = normalAttackDamage.getDamage();
+
+    GlobalData.singleton.appendMessage("(武器)$name: 伤害=$damage");
+
+    damage = target.receiveDamage(
+        self, damage + proceedPassive(self, target, damage));
+
+    for (var element in self.buffs.toList()) {
+      element.afterAttack(self, target, damage);
+    }
+
+    if (self.remainingUses > 0) {
+      self.remainingUses--;
+    }
+    return damage;
+  }
+
+  // Calculate the additional damage dealt by passives
+  int proceedPassive(Entity self, Entity target, int damage) {
+    int add = 0;
+
+    for (var element in self.buffs.toList()) {
+      add += element.onAttack(self, target, damage);
+    }
+    return add;
   }
 
   int receiveDamage(Entity attacker, int damage) {

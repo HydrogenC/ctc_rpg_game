@@ -111,27 +111,27 @@ class OperationView extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Center(
           child: Column(children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.all(10),
+            const Padding(
+                padding: EdgeInsets.all(10),
                 child: Text(
-                  activeEntity.weapon.name,
-                  style: const TextStyle(fontSize: 18),
+                  '普通攻击',
+                  style: TextStyle(fontSize: 18),
                 )),
             enabled
                 ? DraggableButton(
-                    usable: activeEntity.weapon,
+                    usable: activeEntity,
                     width: 100,
                     height: 60,
                     text: '普攻',
-                    tooltip: '攻击伤害: ${activeEntity.weapon.attackDamage}',
-                    backgroundColor: Colors.blueAccent,
+                    tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
+                    backgroundColor: Colors.blueAccent.shade400,
                   )
                 : TooltipButton(
                     width: 100,
                     height: 60,
                     text: '普攻',
-                    tooltip: '攻击伤害: ${activeEntity.weapon.attackDamage}',
-                    backgroundColor: Colors.grey),
+                    tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
+                    backgroundColor: Colors.black54),
             const Padding(
                 padding: EdgeInsets.all(10),
                 child: Text(
@@ -141,13 +141,13 @@ class OperationView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                ...activeEntity.weapon.permanentBuffList
+                ...activeEntity.passiveSkillList
                     .map((e) => TooltipButton(
                           width: 100,
                           height: 60,
                           tooltip: e.description,
                           text: e.name,
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Colors.blueAccent.shade400,
                         ))
               ],
             ),
@@ -160,21 +160,21 @@ class OperationView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                ...activeEntity.weapon.activeSkillList.map((e) => enabled
+                ...activeEntity.activeSkillList.map((e) => enabled
                     ? DraggableButton(
                         width: 100,
                         height: 60,
                         tooltip: e.description,
                         usable: e,
                         text: e.name,
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: Colors.blueAccent.shade400,
                       )
                     : TooltipButton(
                         width: 100,
                         height: 60,
                         text: e.name,
                         tooltip: e.description,
-                        backgroundColor: Colors.grey,
+                        backgroundColor: Colors.black54,
                       ))
               ],
             ),
