@@ -6,7 +6,7 @@ import 'buff.dart';
 import 'global_data.dart';
 import 'basics.dart';
 
-class Entity implements IUsable {
+class Entity{
   @override
   String name = "NULL";
 
@@ -50,31 +50,30 @@ class Entity implements IUsable {
   }
 
   // Do normal attack
-  @override
-  int use(Entity self, Entity target) {
+  int normalAttack(Entity target) {
     int damage = normalAttackDamage.getDamage();
 
     GlobalData.singleton.appendMessage("(武器)$name: 伤害=$damage");
 
     damage = target.receiveDamage(
-        self, damage + proceedPassive(self, target, damage));
+        this, damage + proceedPassive(target, damage));
 
-    for (var element in self.buffs.toList()) {
-      element.afterAttack(self, target, damage);
+    for (var element in buffs.toList()) {
+      element.afterAttack(this, target, damage);
     }
 
-    if (self.remainingUses > 0) {
-      self.remainingUses--;
+    if (remainingUses > 0) {
+      remainingUses--;
     }
     return damage;
   }
 
   // Calculate the additional damage dealt by passives
-  int proceedPassive(Entity self, Entity target, int damage) {
+  int proceedPassive(Entity target, int damage) {
     int add = 0;
 
-    for (var element in self.buffs.toList()) {
-      add += element.onAttack(self, target, damage);
+    for (var element in buffs.toList()) {
+      add += element.onAttack(this, target, damage);
     }
     return add;
   }

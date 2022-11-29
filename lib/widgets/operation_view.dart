@@ -1,3 +1,4 @@
+import 'package:ctc_rpg_game/messages.dart';
 import 'package:ctc_rpg_game/view_models/global_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:ctc_rpg_game/basics.dart';
@@ -9,7 +10,7 @@ var tooltipText = const TextStyle(color: Colors.black, fontSize: 14);
 class DraggableButton extends StatefulWidget {
   const DraggableButton(
       {Key? key,
-      required this.usable,
+      required this.msg,
       required this.width,
       required this.height,
       required this.text,
@@ -17,7 +18,7 @@ class DraggableButton extends StatefulWidget {
       required this.backgroundColor})
       : super(key: key);
 
-  final IUsable usable;
+  final AttackMessage msg;
   final double width, height;
   final String tooltip, text;
   final Color backgroundColor;
@@ -29,9 +30,9 @@ class DraggableButton extends StatefulWidget {
 class _DraggableButtonState extends State<DraggableButton> {
   @override
   Widget build(BuildContext context) {
-    return Draggable<IUsable>(
+    return Draggable(
       // Data is the value this Draggable stores.
-      data: widget.usable,
+      data: widget.msg,
       child: Tooltip(
         message: widget.tooltip,
         child: Container(
@@ -100,9 +101,7 @@ class TooltipButton extends StatelessWidget {
 }
 
 class OperationView extends StatelessWidget {
-  const OperationView({Key? key, required this.enabled}) : super(key: key);
-
-  final bool enabled;
+  OperationView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +109,7 @@ class OperationView extends StatelessWidget {
 
     return Consumer<GlobalViewModel>(builder: (context, vm, child) {
       var activeEntity = vm.activeEntity;
+      var enabled = activeEntity.remainingUses > 0;
 
       return Container(
           padding: const EdgeInsets.all(20),
@@ -123,19 +123,20 @@ class OperationView extends StatelessWidget {
                   )),
               enabled
                   ? DraggableButton(
-                usable: activeEntity,
-                width: 100,
-                height: 60,
-                text: '普攻',
-                tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
-                backgroundColor: Colors.blueAccent.shade400,
-              )
+                      // Target unknown, set as self temporarily
+                      msg: AttackMessage(activeEntity, activeEntity, -1),
+                      width: 100,
+                      height: 60,
+                      text: '普攻',
+                      tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
+                      backgroundColor: Colors.blueAccent.shade400,
+                    )
                   : TooltipButton(
-                  width: 100,
-                  height: 60,
-                  text: '普攻',
-                  tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
-                  backgroundColor: Colors.grey),
+                      width: 100,
+                      height: 60,
+                      text: '普攻',
+                      tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
+                      backgroundColor: Colors.grey.shade800),
               const Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
@@ -146,12 +147,12 @@ class OperationView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   ...activeEntity.passiveSkillList.map((e) => TooltipButton(
-                    width: 100,
-                    height: 60,
-                    tooltip: e.description,
-                    text: e.name,
-                    backgroundColor: Colors.blueAccent.shade400,
-                  ))
+                        width: 100,
+                        height: 60,
+                        tooltip: e.description,
+                        text: e.name,
+                        backgroundColor: Colors.blueAccent.shade400,
+                      ))
                 ],
               ),
               const Padding(
@@ -163,22 +164,26 @@ class OperationView extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  ...activeEntity.activeSkillList.map((e) => enabled
-                      ? DraggableButton(
-                    width: 100,
-                    height: 60,
-                    tooltip: e.description,
-                    usable: e,
-                    text: e.name,
-                    backgroundColor: Colors.blueAccent.shade400,
-                  )
-                      : TooltipButton(
-                    width: 100,
-                    height: 60,
-                    text: e.name,
-                    tooltip: e.description,
-                    backgroundColor: Colors.grey,
-                  ))
+                  ...activeEntity.activeSkillList
+                      .asMap()
+                      .entries
+                      .map((e) => enabled
+                          ? DraggableButton(
+                              width: 100,
+                              height: 60,
+                              tooltip: e.value.description,
+                              msg: AttackMessage(
+                                  activeEntity, activeEntity, e.key),
+                              text: e.value.name,
+                              backgroundColor: Colors.blueAccent.shade400,
+                            )
+                          : TooltipButton(
+                              width: 100,
+                              height: 60,
+                              text: e.value.name,
+                              tooltip: e.value.description,
+                              backgroundColor: Colors.grey.shade800,
+                            ))
                 ],
               ),
             ]),

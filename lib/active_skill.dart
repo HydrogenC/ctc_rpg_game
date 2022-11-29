@@ -2,14 +2,13 @@ import 'basics.dart';
 import 'entity.dart';
 import 'global_data.dart';
 
-abstract class ActiveSkill implements IUsable {
+abstract class ActiveSkill {
   DamageValue skillDamage;
 
   ActiveSkill(this.name, this.description, this.skillDamage);
 
   ActiveSkill clone();
 
-  @override
   int use(Entity self, Entity target) {
     int damage = skillDamage.getDamage();
     damage = target.receiveDamage(
@@ -39,7 +38,6 @@ abstract class ActiveSkill implements IUsable {
     GlobalData.singleton.appendMessage("(主动)$name: $msg");
   }
 
-  @override
   String name;
   String description;
 }

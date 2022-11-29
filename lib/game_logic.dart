@@ -9,6 +9,16 @@ Future<void> startGameLoop() async {
   await for (var msg in messageQueue.stream) {
     if (msg is MoveNextMessage) {
       moveNext();
+    } else if (msg is AttackMessage) {
+      if (msg.type < 0) {
+        msg.self.normalAttack(msg.target);
+      } else {
+        msg.self.activeSkillList[msg.type].use(msg.self, msg.target);
+      }
+
+      msg.self.viewModel?.updateEntity(msg.self);
+      msg.target.viewModel?.updateEntity(msg.target);
+      GlobalData.singleton.viewModel?.forceUpdate();
     }
   }
 }

@@ -68,7 +68,7 @@ class GlobalData {
           targetIndex++;
         }
 
-        entity.use(entity, friends[targetIndex]);
+        entity.normalAttack(friends[targetIndex]);
       }
     }
 

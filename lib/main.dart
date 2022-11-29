@@ -67,14 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         )),
                     Expanded(
                       flex: 4,
-                      child: ValueListenableBuilder(
-                          valueListenable: GlobalData.singleton.messageAppended,
-                          builder: (BuildContext context, bool value,
-                                  Widget? child) =>
-                              OperationView(
-                                  enabled: GlobalData.singleton.activeEntity
-                                          .remainingUses !=
-                                      0)),
+                      child: OperationView(),
                     ),
                     Expanded(
                         flex: 3,

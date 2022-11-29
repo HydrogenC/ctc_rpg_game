@@ -1,5 +1,6 @@
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/global_data.dart';
+import 'package:ctc_rpg_game/messages.dart';
 import 'package:ctc_rpg_game/view_models/entity_view_model.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:ctc_rpg_game/widgets/property_display.dart';
@@ -89,7 +90,7 @@ class _EntityViewState extends State<EntityView> {
             padding: const EdgeInsets.all(12),
             child: Container(
                 padding: const EdgeInsets.all(5.0),
-                child: DragTarget<IUsable>(
+                child: DragTarget<AttackMessage>(
                   builder: (
                     BuildContext context,
                     List<dynamic> accepted,
@@ -179,10 +180,13 @@ class _EntityViewState extends State<EntityView> {
                         highlighted = true;
                       });
                     }
+
                     return widget.entity.hp > 0;
                   },
                   onAccept: (data) {
-                    setState(() {});
+                    highlighted = false;
+                    data.target = widget.entity;
+                    GlobalData.singleton.messageOut.add(data);
                   },
                   onLeave: (data) {
                     setState(() {

@@ -15,7 +15,7 @@ class GlobalViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Call when an entity dies
+  // Tells the interface to update
   void forceUpdate() {
     notifyListeners();
   }
