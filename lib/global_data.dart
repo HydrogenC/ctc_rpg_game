@@ -9,6 +9,7 @@ import 'package:ctc_rpg_game/skills_and_buffs/tic_arise.dart';
 import 'package:ctc_rpg_game/skills_and_buffs/toughness.dart';
 import 'package:ctc_rpg_game/skills_and_buffs/transform.dart';
 import 'package:ctc_rpg_game/buff_type.dart';
+import 'package:ctc_rpg_game/view_models/global_view_model.dart';
 import 'package:flutter/material.dart';
 
 class GlobalData {
@@ -38,14 +39,9 @@ class GlobalData {
   Entity get activeEntity => friends[activeIndex];
   static GlobalData singleton = GlobalData._internal();
   List<String> messageList = [];
-
   ValueNotifier<bool> messageAppended = ValueNotifier(false);
-  ValueNotifier<bool> operationDone = ValueNotifier(false);
-
-  SendPort? messageIn;
   late StreamController messageOut = StreamController.broadcast();
-
-
+  GlobalViewModel? viewModel;
 
   void appendMessage(String str) {
     messageAppended.value = !messageAppended.value;
@@ -73,8 +69,6 @@ class GlobalData {
         }
 
         entity.use(entity, friends[targetIndex]);
-        GlobalData.singleton.operationDone.value =
-            !GlobalData.singleton.operationDone.value;
       }
     }
 
@@ -95,27 +89,5 @@ class GlobalData {
         entity.checkBuffExpired();
       }
     }
-  }
-
-  void moveNext() {
-    if (friendsAlive == 0) {
-      return;
-    }
-
-    bool newTurnFlag = false;
-    do {
-      activeIndex++;
-      if (activeIndex >= friends.length) {
-        newTurnFlag = true;
-        activeIndex = 0;
-      }
-    } while (friends[activeIndex].hp <= 0);
-
-    if (newTurnFlag) {
-      round++;
-      turnStart();
-    }
-
-    operationDone.value = !operationDone.value;
   }
 }

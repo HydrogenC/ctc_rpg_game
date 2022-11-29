@@ -3,7 +3,6 @@ import 'package:ctc_rpg_game/buff.dart';
 import 'package:ctc_rpg_game/entity.dart';
 import 'package:ctc_rpg_game/global_data.dart';
 import 'package:ctc_rpg_game/skills_and_buffs/stunned.dart';
-import 'package:flutter/material.dart';
 import 'package:ctc_rpg_game/widgets/entity_view.dart';
 import '../buff_type.dart';
 
@@ -14,7 +13,7 @@ class ArmourDamage {
   ArmourDamage(this.from, this.amount);
 }
 
-class Toughness extends Buff implements ICustomEntityDisplay {
+class Toughness extends Buff {
   int _armour = 0;
   List<ArmourDamage> damages = [];
   static const String _description = "本回合获得10点护甲，回合结束时，对对手造成失去护甲的同等伤害";
@@ -47,24 +46,4 @@ class Toughness extends Buff implements ICustomEntityDisplay {
 
   @override
   Buff clone(BuffType type) => Toughness(type);
-
-  @override
-  List<Widget> getHealthBarAdditionalWidgets(Entity self) {
-    return [
-      const Padding(
-        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-      ),
-      const Icon(Icons.add_circle, color: Colors.white, size: 16),
-      Padding(
-        padding: textPadding,
-        child: Text(_armour.toString(), style: whiteText),
-      ),
-    ];
-  }
-
-  @override
-  List<Widget> getNameBarAdditionalWidgets(Entity self) => [];
-
-  @override
-  List<Widget> getWeaponBarAdditionalWidgets(Entity self) => [];
 }

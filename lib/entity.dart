@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:ctc_rpg_game/buff_type.dart';
 import 'package:ctc_rpg_game/view_models/entity_view_model.dart';
-import 'package:ctc_rpg_game/view_models/limited_property.dart';
 
 import 'active_skill.dart';
 import 'buff.dart';
@@ -49,8 +46,6 @@ class Entity implements IUsable {
     amount = amount.clamp(0, maxHp - hp);
     hp += amount;
 
-    GlobalData.singleton.operationDone.value =
-        !GlobalData.singleton.operationDone.value;
     return amount;
   }
 
@@ -100,8 +95,6 @@ class Entity implements IUsable {
 
     GlobalData.singleton
         .appendMessage("“$name”受到来自“${attacker.name}”的$damage点伤害");
-    GlobalData.singleton.operationDone.value =
-        !GlobalData.singleton.operationDone.value;
 
     for (var element in buffs.toList()) {
       element.afterDamaged(this, attacker, damage);

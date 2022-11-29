@@ -5,3 +5,7 @@ class NormalAttackMessage {
 
   Entity self, target;
 }
+
+class MoveNextMessage {
+  MoveNextMessage();
+}

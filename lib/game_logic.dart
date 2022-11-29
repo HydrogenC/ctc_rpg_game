@@ -1,14 +1,39 @@
 import 'package:ctc_rpg_game/global_data.dart';
-import 'package:ctc_rpg_game/view_models/limited_property.dart';
+import 'package:ctc_rpg_game/messages.dart';
 
 Future<void> startGameLoop() async {
   await Future.delayed(const Duration(seconds: 2));
   var messageQueue = GlobalData.singleton.messageOut;
+  turnStartCheck();
 
-  for (var entity in GlobalData.singleton.friends) {
-    entity.viewModel!
-        .modifyProperty('hp', LimitedProperty(entity.maxHp, entity.maxHp));
+  await for (var msg in messageQueue.stream) {
+    if (msg is MoveNextMessage) {
+      moveNext();
+    }
   }
+}
+
+void moveNext() {
+  var sing = GlobalData.singleton;
+  if (sing.friendsAlive == 0) {
+    return;
+  }
+
+  bool newTurnFlag = false;
+  do {
+    sing.activeIndex++;
+    if (sing.activeIndex >= sing.friends.length) {
+      newTurnFlag = true;
+      sing.activeIndex = 0;
+    }
+  } while (sing.friends[sing.activeIndex].hp <= 0);
+
+  if (newTurnFlag) {
+    sing.round++;
+    turnStartCheck();
+  }
+
+  sing.viewModel?.updateActiveEntity(sing.activeEntity);
 }
 
 void turnStartCheck() {
@@ -20,6 +45,8 @@ void turnStartCheck() {
       for (var element in entity.buffs.toList()) {
         element.onNewTurn(entity);
       }
+
+      entity.viewModel!.updateEntity(entity);
     }
   }
 
@@ -28,5 +55,7 @@ void turnStartCheck() {
       entity.remainingUses = 1;
       entity.checkBuffExpired();
     }
+
+    entity.viewModel!.updateEntity(entity);
   }
 }

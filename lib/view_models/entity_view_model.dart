@@ -2,8 +2,6 @@ import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
 import 'package:flutter/material.dart';
 
-import 'limited_property.dart';
-
 class PassiveSkillViewModel {
   final String name;
   final String description;
@@ -53,6 +51,7 @@ class EntityViewModel extends ChangeNotifier {
   void updateEntity(Entity entity) {
     // Avoid calling modifyProperty in case of unnecessary updates
     properties['hp'] = LimitedProperty(entity.hp, entity.maxHp);
+    properties['uses'] = entity.remainingUses;
     for (var element in entity.passiveSkillList) {
       element.updateViewModel(this);
     }

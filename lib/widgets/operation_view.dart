@@ -107,81 +107,82 @@ class OperationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint("Redrew the operation area");
-    var activeEntity = GlobalData.singleton.activeEntity;
 
-    return ChangeNotifierProvider(
-        create: (context) => GlobalViewModel(),
-        child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Center(
-              child: Column(children: <Widget>[
-                const Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      '普通攻击',
-                      style: TextStyle(fontSize: 18),
-                    )),
-                enabled
-                    ? DraggableButton(
-                        usable: activeEntity,
-                        width: 100,
-                        height: 60,
-                        text: '普攻',
-                        tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
-                        backgroundColor: Colors.blueAccent.shade400,
-                      )
-                    : TooltipButton(
-                        width: 100,
-                        height: 60,
-                        text: '普攻',
-                        tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
-                        backgroundColor: Colors.grey),
-                const Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      "被动技能",
-                      style: TextStyle(fontSize: 18),
-                    )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    ...activeEntity.passiveSkillList.map((e) => TooltipButton(
-                          width: 100,
-                          height: 60,
-                          tooltip: e.description,
-                          text: e.name,
-                          backgroundColor: Colors.blueAccent.shade400,
-                        ))
-                  ],
-                ),
-                const Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      "主动技能",
-                      style: TextStyle(fontSize: 18),
-                    )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    ...activeEntity.activeSkillList.map((e) => enabled
-                        ? DraggableButton(
-                            width: 100,
-                            height: 60,
-                            tooltip: e.description,
-                            usable: e,
-                            text: e.name,
-                            backgroundColor: Colors.blueAccent.shade400,
-                          )
-                        : TooltipButton(
-                            width: 100,
-                            height: 60,
-                            text: e.name,
-                            tooltip: e.description,
-                            backgroundColor: Colors.grey,
-                          ))
-                  ],
-                ),
-              ]),
-            )));
+    return Consumer<GlobalViewModel>(builder: (context, vm, child) {
+      var activeEntity = vm.activeEntity;
+
+      return Container(
+          padding: const EdgeInsets.all(20),
+          child: Center(
+            child: Column(children: <Widget>[
+              const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    '普通攻击',
+                    style: TextStyle(fontSize: 18),
+                  )),
+              enabled
+                  ? DraggableButton(
+                usable: activeEntity,
+                width: 100,
+                height: 60,
+                text: '普攻',
+                tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
+                backgroundColor: Colors.blueAccent.shade400,
+              )
+                  : TooltipButton(
+                  width: 100,
+                  height: 60,
+                  text: '普攻',
+                  tooltip: '攻击伤害: ${activeEntity.normalAttackDamage}',
+                  backgroundColor: Colors.grey),
+              const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    "被动技能",
+                    style: TextStyle(fontSize: 18),
+                  )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  ...activeEntity.passiveSkillList.map((e) => TooltipButton(
+                    width: 100,
+                    height: 60,
+                    tooltip: e.description,
+                    text: e.name,
+                    backgroundColor: Colors.blueAccent.shade400,
+                  ))
+                ],
+              ),
+              const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    "主动技能",
+                    style: TextStyle(fontSize: 18),
+                  )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  ...activeEntity.activeSkillList.map((e) => enabled
+                      ? DraggableButton(
+                    width: 100,
+                    height: 60,
+                    tooltip: e.description,
+                    usable: e,
+                    text: e.name,
+                    backgroundColor: Colors.blueAccent.shade400,
+                  )
+                      : TooltipButton(
+                    width: 100,
+                    height: 60,
+                    text: e.name,
+                    tooltip: e.description,
+                    backgroundColor: Colors.grey,
+                  ))
+                ],
+              ),
+            ]),
+          ));
+    });
   }
 }

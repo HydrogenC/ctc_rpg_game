@@ -1,8 +1,11 @@
 import 'package:ctc_rpg_game/global_data.dart';
+import 'package:ctc_rpg_game/messages.dart';
+import 'package:ctc_rpg_game/view_models/global_view_model.dart';
 import 'package:ctc_rpg_game/widgets/console_view.dart';
 import 'package:ctc_rpg_game/widgets/entity_panel.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'game_logic.dart';
 
 void main() {
@@ -43,61 +46,59 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void moveNext() {
-    GlobalData.singleton.moveNext();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Column(children: [
-        Expanded(
-            flex: 7,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                    flex: 3,
-                    child: EntityPanel(
-                      title: "友方单位",
-                      entityList: GlobalData.singleton.friends,
-                    )),
-                Expanded(
-                  flex: 4,
-                  child: ValueListenableBuilder(
-                      valueListenable: GlobalData.singleton.operationDone,
-                      builder:
-                          (BuildContext context, bool value, Widget? child) =>
+      body: ChangeNotifierProvider(
+          create: (context) => GlobalViewModel(),
+          child: Column(children: [
+            Expanded(
+                flex: 7,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        flex: 3,
+                        child: EntityPanel(
+                          title: "友方单位",
+                          entityList: GlobalData.singleton.friends,
+                        )),
+                    Expanded(
+                      flex: 4,
+                      child: ValueListenableBuilder(
+                          valueListenable: GlobalData.singleton.messageAppended,
+                          builder: (BuildContext context, bool value,
+                                  Widget? child) =>
                               OperationView(
                                   enabled: GlobalData.singleton.activeEntity
                                           .remainingUses !=
                                       0)),
-                ),
-                Expanded(
-                    flex: 3,
-                    child: EntityPanel(
-                      title: "敌方单位",
-                      entityList: GlobalData.singleton.enemies,
-                    )),
-              ],
-            )),
-        Expanded(
-            flex: 3,
-            child: Container(
-              child: Scrollbar(
-                  child: ValueListenableBuilder(
-                valueListenable: GlobalData.singleton.messageAppended,
-                builder: (BuildContext context, bool b, Widget? child) =>
-                    ConsoleView(),
-              )),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: Colors.indigo.shade800),
-            )),
-      ]),
+                    ),
+                    Expanded(
+                        flex: 3,
+                        child: EntityPanel(
+                          title: "敌方单位",
+                          entityList: GlobalData.singleton.enemies,
+                        )),
+                  ],
+                )),
+            Expanded(
+                flex: 3,
+                child: Container(
+                  child: Scrollbar(
+                      child: ValueListenableBuilder(
+                    valueListenable: GlobalData.singleton.messageAppended,
+                    builder: (BuildContext context, bool b, Widget? child) =>
+                        ConsoleView(),
+                  )),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: Colors.indigo.shade800),
+                )),
+          ])),
       floatingActionButton: FloatingActionButton(
-        onPressed: moveNext,
+        onPressed: () => GlobalData.singleton.messageOut.add(MoveNextMessage()),
         tooltip: '结束回合',
         child: const Icon(Icons.next_plan_outlined),
       ),
