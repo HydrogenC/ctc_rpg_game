@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:ctc_rpg_game/buff_type.dart';
+import 'package:ctc_rpg_game/view_models/entity_view_model.dart';
+import 'package:ctc_rpg_game/view_models/limited_property.dart';
 
 import 'active_skill.dart';
 import 'buff.dart';
@@ -9,7 +13,7 @@ class Entity implements IUsable {
   @override
   String name = "NULL";
 
-  int maxBlood, remainingUses = 1;
+  int maxHp, remainingUses = 1;
   double evadePossibility;
   List<Buff> buffs = [];
   List<ActiveSkill> activeSkillList;
@@ -17,12 +21,13 @@ class Entity implements IUsable {
   // Passive skills are functionally equal to buffs
   List<Buff> passiveSkillList;
   DamageValue normalAttackDamage;
-  late int blood;
+  late int hp;
+  EntityViewModel? viewModel;
 
-  Entity(this.name, this.maxBlood, this.evadePossibility,
-      this.normalAttackDamage, this.activeSkillList, this.passiveSkillList,
+  Entity(this.name, this.maxHp, this.evadePossibility, this.normalAttackDamage,
+      this.activeSkillList, this.passiveSkillList,
       [List<Buff>? initialBuffs]) {
-    blood = maxBlood;
+    hp = maxHp;
 
     if (initialBuffs != null) {
       for (var element in initialBuffs) {
@@ -34,15 +39,15 @@ class Entity implements IUsable {
   Entity.clone(Entity other)
       : this(
             other.name,
-            other.maxBlood,
+            other.maxHp,
             other.evadePossibility,
             other.normalAttackDamage,
             other.activeSkillList,
             other.passiveSkillList);
 
   int cure(int amount) {
-    amount = amount.clamp(0, maxBlood - blood);
-    blood += amount;
+    amount = amount.clamp(0, maxHp - hp);
+    hp += amount;
 
     GlobalData.singleton.operationDone.value =
         !GlobalData.singleton.operationDone.value;
@@ -90,8 +95,8 @@ class Entity implements IUsable {
       damage -= element.onDamaged(this, attacker, damage);
     }
 
-    damage = damage.clamp(0, blood);
-    blood -= damage;
+    damage = damage.clamp(0, hp);
+    hp -= damage;
 
     GlobalData.singleton
         .appendMessage("“$name”受到来自“${attacker.name}”的$damage点伤害");

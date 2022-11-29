@@ -1,16 +1,15 @@
-import 'package:ctc_rpg_game/messages/property_change_message.dart';
+import 'package:ctc_rpg_game/view_models/entity_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PropertyDisplay extends StatefulWidget {
   const PropertyDisplay(
       {Key? key,
-      required this.stream,
       required this.propertyName,
       required this.icon,
       required this.enabledByDefault})
       : super(key: key);
 
-  final Stream<dynamic> stream;
   final IconData icon;
   final String propertyName;
   final bool enabledByDefault;
@@ -20,8 +19,6 @@ class PropertyDisplay extends StatefulWidget {
 }
 
 class _PropertyDisplayState extends State<PropertyDisplay> {
-  int maxValue = -1;
-  int currentValue = 0;
   bool? enabled;
 
   var textPadding = const EdgeInsets.fromLTRB(5, 0, 0, 0);
@@ -31,38 +28,24 @@ class _PropertyDisplayState extends State<PropertyDisplay> {
   Widget build(BuildContext context) {
     enabled ??= widget.enabledByDefault;
 
-    return StreamBuilder(
-        stream: widget.stream,
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.hasData) {
-            debugPrint("Data received");
+    return Consumer<EntityViewModel>(builder: (context, vm, child) {
+      var key = widget.propertyName;
+      enabled = vm.properties.containsKey(key) && vm.properties[key] != -1;
 
-            var info = snapshot.data as PropertyChangeMessage;
-            if (info.properties.containsKey(widget.propertyName)) {
-              currentValue = info.properties[widget.propertyName]!;
-            }
-
-            var maxValueKey = "max_${widget.propertyName}";
-            if (info.properties.containsKey(maxValueKey)) {
-              maxValue = info.properties[maxValueKey]!;
-              enabled = maxValue != -1;
-            }
-          }
-
-          return (enabled!)
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(widget.icon, color: Colors.white, size: 16),
-                    Padding(
-                      padding: textPadding,
-                      child: Text("$currentValue/$maxValue", style: whiteText),
-                    ),
-                  ],
-                )
-              : const SizedBox.shrink();
-        });
+      return (enabled!)
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(widget.icon, color: Colors.white, size: 16),
+                Padding(
+                  padding: textPadding,
+                  child: Text(vm.properties[key].toString(), style: whiteText),
+                ),
+              ],
+            )
+          : const SizedBox.shrink();
+    });
   }
 }

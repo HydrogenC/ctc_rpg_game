@@ -1,3 +1,5 @@
+import 'package:ctc_rpg_game/view_models/entity_view_model.dart';
+
 import 'buff_type.dart';
 import 'entity.dart';
 import 'global_data.dart';
@@ -17,6 +19,8 @@ abstract class Buff extends IGameEventListener {
   void onGain(Entity self) {}
 
   void onRemove(Entity self) {}
+
+  void updateViewModel(EntityViewModel vm) {}
 
   Buff clone(BuffType type);
 }

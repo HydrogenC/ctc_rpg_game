@@ -2,6 +2,8 @@ import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
 import 'package:flutter/material.dart';
 
+import 'limited_property.dart';
+
 class PassiveSkillViewModel {
   final String name;
   final String description;
@@ -30,12 +32,40 @@ class EntityViewModel extends ChangeNotifier {
   final List<ActiveSkillViewModel> activeSkills;
   final List<PassiveSkillViewModel> passiveSkills;
   List<BuffViewModel> buffs = [];
+  Map<String, Object> properties = {};
+  bool alive = true;
 
   EntityViewModel(this.name, this.normalAttackDamage, this.activeSkills,
       this.passiveSkills);
 
+  void modifyProperty(String key, Object obj) {
+    properties[key] = obj;
+    notifyListeners();
+  }
+
+  void setAlive(bool value) {
+    if (alive != value) {
+      alive = value;
+      notifyListeners();
+    }
+  }
+
+  void updateEntity(Entity entity) {
+    // Avoid calling modifyProperty in case of unnecessary updates
+    properties['hp'] = LimitedProperty(entity.hp, entity.maxHp);
+    for (var element in entity.passiveSkillList) {
+      element.updateViewModel(this);
+    }
+
+    for (var element in entity.buffs) {
+      element.updateViewModel(this);
+    }
+
+    notifyListeners();
+  }
+
   static EntityViewModel fromEntity(Entity entity) {
-    return EntityViewModel(entity.name, entity.normalAttackDamage, [
+    var model = EntityViewModel(entity.name, entity.normalAttackDamage, [
       ...entity.activeSkillList.asMap().entries.map(
           (e) => ActiveSkillViewModel(e.value.name, e.value.description, e.key))
     ], [
@@ -44,5 +74,7 @@ class EntityViewModel extends ChangeNotifier {
           .entries
           .map((e) => PassiveSkillViewModel(e.value.name, e.value.description))
     ]);
+    entity.viewModel = model;
+    return model;
   }
 }

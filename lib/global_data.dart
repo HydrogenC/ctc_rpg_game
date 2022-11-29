@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/entity.dart';
-import 'package:ctc_rpg_game/messages/property_change_message.dart';
 import 'package:ctc_rpg_game/skills_and_buffs/ghost_book.dart';
 import 'package:ctc_rpg_game/skills_and_buffs/tic_arise.dart';
 import 'package:ctc_rpg_game/skills_and_buffs/toughness.dart';
@@ -63,7 +62,7 @@ class GlobalData {
         int targetIndex = 0;
 
         while (true) {
-          if (friends[targetIndex].blood > 0) {
+          if (friends[targetIndex].hp > 0) {
             if (target == 0) {
               break;
             }
@@ -80,7 +79,7 @@ class GlobalData {
     }
 
     for (var entity in friends) {
-      if (entity.blood > 0) {
+      if (entity.hp > 0) {
         entity.remainingUses = 1;
 
         entity.checkBuffExpired();
@@ -91,7 +90,7 @@ class GlobalData {
     }
 
     for (var entity in enemies) {
-      if (entity.blood > 0) {
+      if (entity.hp > 0) {
         entity.remainingUses = 1;
         entity.checkBuffExpired();
       }
@@ -110,7 +109,7 @@ class GlobalData {
         newTurnFlag = true;
         activeIndex = 0;
       }
-    } while (friends[activeIndex].blood <= 0);
+    } while (friends[activeIndex].hp <= 0);
 
     if (newTurnFlag) {
       round++;

@@ -1,6 +1,5 @@
 import 'package:ctc_rpg_game/basics.dart';
 import 'package:ctc_rpg_game/global_data.dart';
-import 'package:ctc_rpg_game/messages/property_change_message.dart';
 import 'package:ctc_rpg_game/view_models/entity_view_model.dart';
 import 'package:ctc_rpg_game/widgets/operation_view.dart';
 import 'package:ctc_rpg_game/widgets/property_display.dart';
@@ -71,7 +70,7 @@ class _EntityViewState extends State<EntityView> {
         );
 
     Entity activeEntity = GlobalData.singleton.activeEntity;
-    if (widget.entity.blood > 0) {
+    if (widget.entity.hp > 0) {
       if (widget.entity == activeEntity) {
         currentState = EntityState.operating;
       } else if (currentState == EntityState.operating) {
@@ -158,14 +157,12 @@ class _EntityViewState extends State<EntityView> {
                                       spacing: 8.0,
                                       runSpacing: 4.0,
                                       alignment: WrapAlignment.center,
-                                      children: [
+                                      children: const [
                                         PropertyDisplay(
-                                            stream: propertyMessageStream!,
                                             propertyName: 'hp',
                                             icon: Icons.favorite,
                                             enabledByDefault: true),
                                         PropertyDisplay(
-                                            stream: propertyMessageStream!,
                                             propertyName: 'uses',
                                             icon: Icons.beenhere_rounded,
                                             enabledByDefault: true)
@@ -179,12 +176,12 @@ class _EntityViewState extends State<EntityView> {
                     );
                   },
                   onWillAccept: (data) {
-                    if (widget.entity.blood > 0) {
+                    if (widget.entity.hp > 0) {
                       setState(() {
                         currentState = EntityState.highlighted;
                       });
                     }
-                    return widget.entity.blood > 0;
+                    return widget.entity.hp > 0;
                   },
                   onAccept: (data) {
                     setState(() {
@@ -192,13 +189,13 @@ class _EntityViewState extends State<EntityView> {
                       GlobalData.singleton.operationDone.value =
                           !GlobalData.singleton.operationDone.value;
 
-                      currentState = widget.entity.blood == 0
+                      currentState = widget.entity.hp == 0
                           ? EntityState.dead
                           : EntityState.normal;
                     });
                   },
                   onLeave: (data) {
-                    if (widget.entity.blood > 0) {
+                    if (widget.entity.hp > 0) {
                       setState(() {
                         currentState = EntityState.normal;
                       });
